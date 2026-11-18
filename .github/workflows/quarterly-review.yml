@@ -2,7 +2,7 @@ name: Quarterly guideline review
 
 on:
   schedule:
-    - cron: "17 13 1 1,4,7,10 *"   # 1st of Jan/Apr/Jul/Oct
+    - cron: "0 13 1 1,4,7,10 *"
   workflow_dispatch:
 
 permissions:
@@ -10,19 +10,17 @@ permissions:
   contents: read
 
 jobs:
-  open-review-issue:
+  review:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python scripts/stale_pages.py > stale.md
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: List chapters not reviewed in 90 days
+        run: python3 scripts/stale_pages.py > review.md
       - name: Open review issue
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh issue create \
-            --title "Quarterly guideline review — $(date +%Y-%m)" \
-            --label "guideline-update" \
-            --body-file stale.md || \
-          gh issue create \
-            --title "Quarterly guideline review — $(date +%Y-%m)" \
-            --body-file stale.md
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh issue create --title "Quarterly guideline review — $(date +%Y-%m)" --body-file review.md
