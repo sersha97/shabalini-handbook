@@ -22,7 +22,7 @@
     - {name: Pulmonary vascular, emoji: "🩸"}
     - {name: Pleura, emoji: "💦"}
     - {name: Respiratory failure, emoji: "🆘"}
-  planned: [ARDS, Hemoptysis, ILD flare]
+  planned: [ Hemoptysis, ILD flare]
 
 - id: id
   name: Infectious Disease
