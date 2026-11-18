@@ -5,12 +5,17 @@
 
   // ---- scrolled state + back-to-top ----
   var totop = $('#totop');
+  // Runs at most once per frame and only touches the page when a state actually changes.
+  var wasScrolled = null, wasTop = null, ticking = false;
   function onScroll() {
-    var y = window.scrollY;
-    document.body.classList.toggle('scrolled', y > 160);
-    if (totop) totop.hidden = y < 600;
+    ticking = false;
+    var y = window.scrollY, sc = y > 160, top = y < 600;
+    if (sc !== wasScrolled) { document.body.classList.toggle('scrolled', sc); wasScrolled = sc; }
+    if (totop && top !== wasTop) { totop.hidden = top; wasTop = top; }
   }
-  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }, { passive: true }); onScroll();
   if (totop) totop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
   // ---- sections: collapsed on phones except first two ----
@@ -38,16 +43,26 @@
   });
 
   // highlight current chip
-  var chips = $$('#chips a.chip');
+  // Important: never call scrollIntoView() here. It runs during the user's swipe and on
+  // phones it stops the page's momentum at every section ("sticky" scrolling).
+  // We move only the chip bar sideways, and only when the active chip is off-screen.
+  var chips = $$('#chips a.chip'), bar = $('#chips'), current = null;
+  function showChip(c) {
+    if (!bar) return;
+    var left = c.offsetLeft, right = left + c.offsetWidth;
+    if (left < bar.scrollLeft || right > bar.scrollLeft + bar.clientWidth) {
+      bar.scrollLeft = left - (bar.clientWidth - c.offsetWidth) / 2;
+    }
+  }
   if (chips.length && 'IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (ents) {
       ents.forEach(function (en) {
-        if (en.isIntersecting) {
-          chips.forEach(function (c) {
-            var on = c.getAttribute('href') === '#' + en.target.id; c.classList.toggle('on', on);
-            if (on) c.scrollIntoView({ inline: 'center', block: 'nearest' });
-          });
-        }
+        if (!en.isIntersecting || en.target.id === current) return;
+        current = en.target.id;
+        chips.forEach(function (c) {
+          var on = c.getAttribute('href') === '#' + current; c.classList.toggle('on', on);
+          if (on) showChip(c);
+        });
       });
     }, { rootMargin: '-120px 0px -65% 0px' });
     secs.forEach(function (s) { io.observe(s); });

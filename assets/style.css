@@ -6,7 +6,7 @@
 }
 @media (prefers-color-scheme:dark){:root{--ink:#e9edf3;--ink2:#b8c2d0;--mute:#8b97a8;--bg:#0e1622;--card:#162232;--line:#243447;--sh:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25)}}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:120px;-webkit-text-size-adjust:100%}
+html{scroll-padding-top:120px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans)}
 a{color:inherit}
 main{max-width:860px;margin:0 auto;padding:0 14px 40px}
@@ -80,7 +80,7 @@ body.scrolled .ttitle{opacity:.95}
 .tags{display:flex;flex-wrap:wrap;gap:6px}.tag{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.18)}
 .meta{margin-top:12px;font-size:12.5px;opacity:.85}
 .chips{position:sticky;top:56px;z-index:20;display:flex;gap:6px;overflow-x:auto;padding:10px 2px;margin:0 -14px;padding-left:14px;padding-right:14px;
-  background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);scrollbar-width:none}
+  background:var(--bg);box-shadow:0 1px 0 var(--line);scrollbar-width:none;overscroll-behavior-x:contain}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;font:600 13px var(--sans);text-decoration:none;padding:7px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);cursor:pointer;white-space:nowrap}
 .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -233,3 +233,11 @@ tr:last-child td{border-bottom:0}
 .rootmap{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;font-size:13.5px}
 .rootmap div{padding:8px 10px;border-radius:12px;background:color-mix(in srgb,#5b6bd6 9%,var(--card));border:1px solid var(--line)}
 .rootmap span{margin-right:4px}.rootmap .hl{grid-column:1/-1;background:color-mix(in srgb,#d64545 10%,var(--card));border-color:color-mix(in srgb,#d64545 35%,transparent)}
+
+/* ---------- smooth-scroll helpers ---------- */
+/* Horizontal boxes (tables, ECG strips) must not grab vertical swipes. */
+.tblwrap,.ecgwrap,.tabbar{overscroll-behavior-x:contain;touch-action:pan-x pan-y}
+/* Lighter card shadow on phones: one layer is cheaper to draw during scroll. */
+@media (max-width:700px){:root{--sh:0 1px 3px rgba(15,42,67,.08)}}
+@media (max-width:700px) and (prefers-color-scheme:dark){:root{--sh:0 1px 3px rgba(0,0,0,.35)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
