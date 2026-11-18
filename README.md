@@ -1,38 +1,62 @@
-# Hospitalist Handbook
+# Hospitalist Handbook (v2)
 
-Source for **shabalini.com/handbook** — a practical hospital medicine handbook for the wards and ABIM boards. Educational use only; not medical advice.
+Source for **shabalini.com/handbook**. Library → subject → chapter, with a back arrow on every page.
+Educational use only; not medical advice.
 
-## Add or update a page
+## Folder map
 
-1. Copy `docs/_template.md` into the right system folder (for example `docs/cardiology/heart-failure.md`).
-2. Fill in the sections. Set `last_reviewed` to today.
-3. Add the page to `nav:` in `mkdocs.yml`.
-4. Add one line to `docs/updates.md`.
-5. Commit to `main`. GitHub Actions builds the site and uploads it.
+| Path | What it is |
+|---|---|
+| `subjects.yml` | The library: subjects, emoji, colors, sub-chapter groups, "coming next" list |
+| `content/<subject>/<chapter>.md` | One chapter per file (Markdown + front matter) |
+| `content/tools/*.md` | Formulas, quick cards, guideline watch, disclaimer |
+| `figures.py` | Drawn ECG strips and diagrams |
+| `assets/` | Style, navigation and search script |
+| `build.py` | Turns everything into the static site |
+| `site/` | Built website — open `site/index.html` in a browser |
 
-You can edit directly on github.com (pencil icon) — no install needed.
-
-## Preview on your computer (optional)
+## Build
 
 ```bash
-pip install -r requirements.txt
-mkdocs serve
+pip install markdown pyyaml
+python3 build.py        # writes ./site
 ```
 
-Open http://127.0.0.1:8000.
+## Add a chapter
 
-## One-time deploy setup
+1. Copy any chapter (for example `content/cardiology/flutter.md`) to `content/<subject>/<new-name>.md`.
+2. Edit the front matter: `title`, `emoji`, `group` (must match a group in `subjects.yml`), `order`, `summary`, `tags`, `reviewed`, `sources`.
+3. Write the sections as `## 🧠 Heading` — each `##` becomes a collapsible card and a jump chip.
+4. Run `python3 build.py`. Remove the topic from `planned:` in `subjects.yml`.
 
-In GitHub: **Settings → Secrets and variables → Actions → New repository secret**. Add:
+## Special blocks
 
-| Secret | Value |
-|---|---|
-| `FTP_SERVER` | FTP host from ADM.TOOLS |
-| `FTP_USERNAME` | FTP user |
-| `FTP_PASSWORD` | FTP password |
-| `FTP_SERVER_DIR` | Server folder for `/handbook/`, ending in `/` (for example `/shabalini.com/www/handbook/`) |
+```text
+:::bottom            ⚡ Bottom line box (also: pearl, warn, analogy, dose, board, new)
+- text
+:::
 
-## Automations
+:::flow              Step-by-step decision chart
+Q: Question?
+Y: What to do if yes
+N: What to do if no
+:::
 
-- **deploy.yml** — builds on every push and PR; deploys from `main`.
-- **quarterly-review.yml** — opens a review issue on Jan 1, Apr 1, Jul 1, Oct 1 listing pages not reviewed in 90 days.
+:::tabs              Tabbed panel
+=== Tab one
+content
+=== Tab two
+content
+:::
+
+{{ecg:af|Caption}}   ECG strip: sinus af flutter svt vt torsades longqt avb1 mobitz1 mobitz2 chb stemi pericarditis hyperk sinetach
+{{fig:ef-spectrum}}  Diagram: ef-spectrum hemo-profiles acs-spectrum af-bouncer hfref-pillars sepsis-hour1 acid-base hypona-algo cirrhosis-map pe-risk stroke-time
+```
+
+## Deploy to shabalini.com/handbook
+
+Upload the contents of `site/` to the server folder for `/handbook/` (FTP in ADM.TOOLS), or use the GitHub Action in `.github/workflows/deploy.yml` (same FTP secrets as before: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR`).
+
+## Quarterly review
+
+Every Jan / Apr / Jul / Oct: check new guidelines, update the chapter, change `reviewed:`, and add a line to `content/tools/guideline-watch.md`.

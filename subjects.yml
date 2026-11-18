@@ -1,0 +1,111 @@
+# Subject library. Order here = order on the home page.
+# Each topic file lives in content/<id>/<slug>.md and names its group in front matter.
+- id: cardiology
+  name: Cardiology & EP
+  emoji: "❤️"
+  color: "#d64545"
+  blurb: Rhythms, heart failure, ACS and everything that makes the pager beep at 3 AM.
+  groups:
+    - {name: Arrhythmias, emoji: "⚡"}
+    - {name: Heart failure, emoji: "💧"}
+    - {name: Coronary & ACS, emoji: "🫀"}
+    - {name: Syncope & pericardium, emoji: "🩺"}
+  planned: [Hypertensive emergency, Pacemaker & ICD on the wards, Infective endocarditis, Aortic stenosis inpatient]
+
+- id: pulmonary
+  name: Pulmonary & Critical Care
+  emoji: "🫁"
+  color: "#2b7bb9"
+  blurb: Air in, CO₂ out. Airways, clots, fluid and the failing lung.
+  groups:
+    - {name: Airways, emoji: "🌬️"}
+    - {name: Pulmonary vascular, emoji: "🩸"}
+    - {name: Pleura, emoji: "💦"}
+    - {name: Respiratory failure, emoji: "🆘"}
+  planned: [ARDS, Hemoptysis, ILD flare]
+
+- id: id
+  name: Infectious Disease
+  emoji: "🦠"
+  color: "#3f9c5a"
+  blurb: Find the bug, hit it early, then narrow fast.
+  groups:
+    - {name: Sepsis, emoji: "🔥"}
+    - {name: Pneumonia, emoji: "🫁"}
+    - {name: Urinary tract, emoji: "🚽"}
+    - {name: Skin & soft tissue, emoji: "🩹"}
+  planned: [C. difficile, S. aureus bacteremia & endocarditis, Meningitis]
+
+- id: renal
+  name: Renal, Lytes & Acid–Base
+  emoji: "🧂"
+  color: "#8a5cc2"
+  blurb: Kidneys, sodium, potassium and the art of reading a blood gas.
+  groups:
+    - {name: Kidney, emoji: "🫘"}
+    - {name: Electrolytes, emoji: "⚖️"}
+    - {name: Acid–base, emoji: "🧪"}
+  planned: [Hypercalcemia, Hypokalemia / Mg / Phos, Hypernatremia, Rhabdomyolysis]
+
+- id: gi
+  name: GI & Liver
+  emoji: "🍽️"
+  color: "#c47a1c"
+  blurb: Bleeds, livers and the angry pancreas.
+  groups:
+    - {name: GI bleeding, emoji: "🩸"}
+    - {name: Liver, emoji: "🍺"}
+    - {name: Pancreas, emoji: "🔥"}
+  planned: [Lower GI bleed, Acute liver failure, Alcohol-associated hepatitis]
+
+- id: endo
+  name: Endocrine
+  emoji: "🍬"
+  color: "#d1499b"
+  blurb: Sugar, hormones and the insulin drip.
+  groups:
+    - {name: Diabetes, emoji: "🩸"}
+    - {name: Adrenal & thyroid, emoji: "🦋"}
+  planned: [Thyroid storm / myxedema coma, Hypoglycemia, Hypercalcemia]
+
+- id: neuro
+  name: Neurology
+  emoji: "🧠"
+  color: "#5b6bd6"
+  blurb: Time is brain. Stroke, seizures and withdrawal.
+  groups:
+    - {name: Vascular, emoji: "⏱️"}
+    - {name: Seizures, emoji: "⚡"}
+    - {name: Toxic & withdrawal, emoji: "🍸"}
+  planned: [Altered mental status approach, Headache red flags]
+
+- id: heme
+  name: Hematology & Oncology
+  emoji: "🩸"
+  color: "#b8323a"
+  blurb: Blood counts, clots and transfusion triggers.
+  groups:
+    - {name: Red cells, emoji: "🔴"}
+    - {name: Platelets & clotting, emoji: "🧷"}
+    - {name: Oncologic emergencies, emoji: "🎗️"}
+  planned: [TTP / HUS, Tumor lysis syndrome, Hypercalcemia of malignancy, Spinal cord compression]
+
+- id: geri
+  name: Geriatrics & Peri-op
+  emoji: "👵"
+  color: "#2f9c95"
+  blurb: The older patient, the confused patient and the patient going to the OR.
+  groups:
+    - {name: Geriatrics, emoji: "🧓"}
+    - {name: Peri-operative, emoji: "🔪"}
+    - {name: Goals of care, emoji: "🕊️"}
+  planned: [Falls, Peri-op anticoagulation, Discharge planning]
+
+- id: nightcalls
+  name: Night Calls
+  emoji: "🌙"
+  color: "#3b4a6b"
+  blurb: The page comes in. What do you ask, see and do first?
+  groups:
+    - {name: Common pages, emoji: "📟"}
+  planned: [New hypoxia, Altered mental status, Low urine output, Patient fell]
