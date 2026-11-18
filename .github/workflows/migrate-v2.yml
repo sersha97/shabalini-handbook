@@ -14,9 +14,9 @@ jobs:
       - name: Replace MkDocs source with v2 source
         run: |
           set -e
-          test -f handbook-src.zip
+          test -f .github/workflows/handbook-src.zip
           mkdir -p /tmp/src
-          unzip -q -o handbook-src.zip -d /tmp/src
+          unzip -q -o .github/workflows/handbook-src.zip -d /tmp/src
           git rm -r -q --ignore-unmatch docs mkdocs.yml requirements.txt scripts README.md .gitignore handbook-src.zip
           cp -r /tmp/src/. .
           git add -A
