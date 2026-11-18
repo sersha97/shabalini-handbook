@@ -218,3 +218,18 @@ tr:last-child td{border-bottom:0}
 .alvarrow span{display:block;font-size:26px;line-height:1}
 @media (max-width:700px){.alvarrow span{transform:rotate(90deg)}}
 .ards .t1{font-size:16px}.ards .t2{font-size:14px}.ards .t3{font-size:13px;font-weight:600}
+/* cauda equina anatomy */
+.ces .canal{fill:color-mix(in srgb,#5b6bd6 8%,var(--card));stroke:var(--line);stroke-width:2}
+.ces .cord{fill:#5b6bd6}.ces .wht{fill:#fff;font-weight:700}
+.ces .root{stroke:#d9a12b;stroke-width:3;fill:none;stroke-linecap:round}
+.ces .vert rect{fill:color-mix(in srgb,#c9b79c 40%,var(--card));stroke:#a8957a;stroke-width:1.5}
+.ces .disc{fill:#d64545;opacity:.9}
+.ces .lead{stroke:var(--ink2);stroke-width:1.5;fill:none}.ces .lead.red{stroke:#d64545}
+.ces .lab{font:700 14px var(--sans);fill:var(--ink)}.ces .sm{font:500 12px var(--sans);fill:var(--ink2)}
+.ces .box{fill:var(--card);stroke:var(--line);stroke-width:1.5}
+.ces .row{font:500 14px var(--sans);fill:var(--ink);text-anchor:start}
+.ces .t3{fill:#d64545}
+.ces{max-width:400px;display:block;margin:0 auto}.ces .lab.red{fill:#d64545}
+.rootmap{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;font-size:13.5px}
+.rootmap div{padding:8px 10px;border-radius:12px;background:color-mix(in srgb,#5b6bd6 9%,var(--card));border:1px solid var(--line)}
+.rootmap span{margin-right:4px}.rootmap .hl{grid-column:1/-1;background:color-mix(in srgb,#d64545 10%,var(--card));border-color:color-mix(in srgb,#d64545 35%,transparent)}

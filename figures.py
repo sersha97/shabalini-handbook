@@ -339,6 +339,58 @@ def _():
 <p class="figcap">ARDS lungs are not stiff — they are <b>small</b>. A "normal" 10 mL/kg breath goes into a baby-sized lung → overdistension. That is why we set tidal volume by predicted body weight (6 mL/kg) and watch driving pressure. Proning makes ventilation more even and lowers mortality in severe ARDS (PROSEVA).</p>"""
 
 
+@fig("ces-anatomy")
+def _():
+    roots = "".join(
+        f'<path d="M{x0} 168 C{x0} 250, {x1} 290, {x1} 410" class="root"/>'
+        for x0, x1 in [(171,141),(175,151),(179,161),(183,171),(187,181),(191,191),(195,201),(199,211)])
+    return f"""<svg viewBox="0 0 360 440" class="diag ces" role="img" aria-label="Cauda equina anatomy and disc compression">
+<text x="180" y="20" class="t1">CORD ENDS → "HORSE TAIL" BEGINS</text>
+<rect x="132" y="34" width="90" height="390" rx="34" class="canal"/>
+<path d="M165 36 L165 130 Q185 182 205 130 L205 36 Z" class="cord"/>
+<text x="185" y="90" class="t2 wht">cord</text>
+{roots}
+<g class="vert"><rect x="236" y="56" width="70" height="42" rx="8"/><rect x="236" y="130" width="70" height="42" rx="8"/><rect x="236" y="204" width="70" height="42" rx="8"/><rect x="236" y="278" width="70" height="42" rx="8"/><rect x="236" y="352" width="70" height="42" rx="8"/></g>
+<text x="271" y="82" class="t2">T12</text><text x="271" y="156" class="t2">L1–L2</text><text x="271" y="230" class="t2">L3</text><text x="271" y="304" class="t2">L4</text><text x="271" y="378" class="t2">L5–S1</text>
+<ellipse cx="212" cy="336" rx="36" ry="14" class="disc"/>
+<text x="118" y="164" class="lab" text-anchor="end">Conus</text><text x="118" y="182" class="sm" text-anchor="end">cord tip</text><path d="M122 168 L178 170" class="lead"/>
+<text x="118" y="250" class="lab" text-anchor="end">Cauda</text><text x="118" y="268" class="sm" text-anchor="end">equina</text><text x="118" y="284" class="sm" text-anchor="end">(roots)</text><path d="M122 256 L160 256" class="lead"/>
+<text x="118" y="334" class="lab red" text-anchor="end">Disc</text><text x="118" y="352" class="sm" text-anchor="end">herniation</text><path d="M122 338 L178 336" class="lead red"/>
+</svg>
+<div class="rootmap">
+<div><span>🦵</span><b>L2–S1</b> legs: power, reflexes</div>
+<div><span>🪑</span><b>S2–S5</b> saddle sensation</div>
+<div><span>🚽</span><b>S2–S4</b> bladder</div>
+<div><span>💩</span><b>S2–S4</b> anal sphincter, bowel</div>
+<div><span>❤️</span><b>S2–S4</b> erection, genital feeling</div>
+<div class="hl">🎯 S2–S4 roots run in the <b>middle</b> → a central disc hits them first</div>
+</div>
+<p class="figcap">The spinal cord ends at <b>L1–L2</b> (conus medullaris). Below that, the canal holds only nerve roots — the cauda equina (Latin: "horse's tail"). Roots are <b>peripheral nerves</b>, so damage gives <b>lower motor neuron</b> signs: weak, floppy, no reflexes. Memory hook: "S2, 3, 4 keeps the poo off the floor."</p>"""
+
+
+@fig("ces-redflags")
+def _():
+    return """<div class="hexgrid">
+<div class="hx">🪑<b>Saddle numbness</b><small>perineum, perianal, inner thighs — "toilet paper feels different"</small></div>
+<div class="hx">🚽<b>Bladder change</b><small>hesitancy, weak stream, can't feel urine pass, retention</small></div>
+<div class="hx">💩<b>Bowel change</b><small>new incontinence, can't feel stool, ↓ anal tone</small></div>
+<div class="hx">❤️<b>Sexual change</b><small>new erectile dysfunction, ↓ genital sensation</small></div>
+<div class="hx">🦵🦵<b>Bilateral sciatica</b><small>pain, numbness or weakness in both legs</small></div>
+<div class="hx">📉<b>Progressive weakness</b><small>foot drop, new trouble walking</small></div>
+</div>
+<p class="figcap">Any one of these + back or leg pain (new, within ~2 weeks) = <b>emergency MRI</b>. Patients rarely volunteer them — you must <b>ask</b> about each one.</p>"""
+
+
+@fig("ces-stages")
+def _():
+    return """<div class="spec">
+<div class="specitem ua"><b>CES-S / CES-I</b><span>Symptoms ± signs, bladder still under voluntary control</span><span>➡️ <b>best window</b> — decompress now</span></div>
+<div class="specitem nst"><b>CES-R</b><span>Painless urinary retention + overflow</span><span>➡️ outcome much worse</span></div>
+<div class="specitem st"><b>CES-C</b><span>Complete: no saddle sensation, no bladder or anal control</span><span>➡️ often permanent</span></div>
+</div>
+<p class="figcap">S = suspected · I = incomplete · R = retention · C = complete. The goal is to <b>operate before CES-R</b>. Once the bladder is gone, surgery often cannot bring it back.</p>"""
+
+
 def render_fig(name):
     return f'<figure class="hbfig">{FIGS[name]()}</figure>'
 

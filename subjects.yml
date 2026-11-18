@@ -77,6 +77,7 @@
     - {name: Vascular, emoji: "⏱️"}
     - {name: Seizures, emoji: "⚡"}
     - {name: Toxic & withdrawal, emoji: "🍸"}
+    - {name: Spine, emoji: "🦴"}
   planned: [Altered mental status approach, Headache red flags]
 
 - id: heme
