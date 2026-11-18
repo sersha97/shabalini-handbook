@@ -1,0 +1,28 @@
+name: Quarterly guideline review
+
+on:
+  schedule:
+    - cron: "17 13 1 1,4,7,10 *"   # 1st of Jan/Apr/Jul/Oct
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  open-review-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python scripts/stale_pages.py > stale.md
+      - name: Open review issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Quarterly guideline review — $(date +%Y-%m)" \
+            --label "guideline-update" \
+            --body-file stale.md || \
+          gh issue create \
+            --title "Quarterly guideline review — $(date +%Y-%m)" \
+            --body-file stale.md
