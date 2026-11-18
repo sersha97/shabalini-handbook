@@ -284,6 +284,61 @@ def _():
 </ol>"""
 
 
+@fig("ards-alveolus")
+def _():
+    return """<div class="alvpair">
+<svg viewBox="0 0 340 320" class="diag ards" role="img" aria-label="Normal alveolus">
+<text x="170" y="22" class="t1">NORMAL ALVEOLUS</text>
+<circle cx="170" cy="145" r="98" fill="#eaf4fb" stroke="#7fb3d5" stroke-width="4"/>
+<circle cx="170" cy="145" r="91" fill="none" stroke="#f2b134" stroke-width="3" stroke-dasharray="3 3"/>
+<text x="170" y="130" class="t2">air-filled</text><text x="170" y="150" class="t2">thin wall →</text><text x="170" y="168" class="t2">fast O₂ transfer</text>
+<text x="170" y="41" class="t3" style="fill:#b7860b">surfactant keeps it open</text>
+<rect x="62" y="256" width="216" height="26" rx="13" fill="#d64545" opacity=".85"/>
+<circle cx="110" cy="269" r="7" fill="#fff" opacity=".8"/><circle cx="170" cy="269" r="7" fill="#fff" opacity=".8"/><circle cx="230" cy="269" r="7" fill="#fff" opacity=".8"/>
+<text x="170" y="305" class="t2">capillary · tight endothelium</text>
+</svg>
+<div class="alvarrow">⚡ injury<span>→</span></div>
+<svg viewBox="0 0 340 320" class="diag ards" role="img" aria-label="ARDS alveolus">
+<defs><pattern id="fluid" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#f4c7a1"/><circle cx="2" cy="2" r="1" fill="#e8a46e"/></pattern></defs>
+<text x="170" y="22" class="t1" style="fill:#c0392b">ARDS — EXUDATIVE PHASE</text>
+<circle cx="170" cy="145" r="98" fill="#eaf4fb" stroke="#c0392b" stroke-width="4" stroke-dasharray="10 5"/>
+<path d="M75 170 A98 98 0 0 0 265 170 Z" fill="url(#fluid)"/>
+<path d="M82 196 Q170 226 258 196" stroke="#7a4a2a" stroke-width="5" fill="none"/>
+<text x="170" y="118" class="t2">less air · no surfactant</text>
+<text x="170" y="138" class="t2">→ alveoli collapse</text>
+<text x="170" y="192" class="t2">protein-rich edema</text>
+<text x="170" y="214" class="t3">hyaline membrane</text>
+<circle cx="135" cy="232" r="9" fill="#9b59b6"/><circle cx="205" cy="230" r="9" fill="#9b59b6"/>
+<text x="170" y="250" class="t3" style="fill:#7d3c98">neutrophils</text>
+<rect x="62" y="256" width="216" height="26" rx="13" fill="#d64545" opacity=".85"/>
+<path d="M110 256 L106 238 M230 256 L235 238" stroke="#d64545" stroke-width="3"/>
+<text x="170" y="305" class="t2" style="fill:#c0392b">leaky capillary → fluid floods in</text>
+</svg>
+</div>
+<p class="figcap">Injury to the alveolar epithelium and capillary endothelium → protein-rich fluid, neutrophils and hyaline membranes fill the air space; surfactant is lost, so alveoli collapse. Result: <b>shunt</b> (blood passes unventilated alveoli), <b>stiff lungs</b> (low compliance) and <b>dead space</b>.</p>"""
+
+
+@fig("baby-lung")
+def _():
+    return """<div class="babylung">
+<div class="bl">
+<b>🛌 Supine</b>
+<div class="zone air">Aerated "baby lung"<small>(often only 20–30% of normal size)</small></div>
+<div class="zone mid">Recruitable — opens with PEEP</div>
+<div class="zone col">Collapsed / consolidated<small>(dependent, toward the bed)</small></div>
+<div class="bed">bed</div>
+</div>
+<div class="bl">
+<b>🔄 Prone</b>
+<div class="zone air">Aeration spreads more evenly</div>
+<div class="zone mid">Back (dorsal) lung re-opens — most of the lung mass</div>
+<div class="zone air2">Better V/Q match, less overdistension</div>
+<div class="bed">bed</div>
+</div>
+</div>
+<p class="figcap">ARDS lungs are not stiff — they are <b>small</b>. A "normal" 10 mL/kg breath goes into a baby-sized lung → overdistension. That is why we set tidal volume by predicted body weight (6 mL/kg) and watch driving pressure. Proning makes ventilation more even and lowers mortality in severe ARDS (PROSEVA).</p>"""
+
+
 def render_fig(name):
     return f'<figure class="hbfig">{FIGS[name]()}</figure>'
 
