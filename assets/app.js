@@ -45,7 +45,13 @@
         if (en.isIntersecting) {
           chips.forEach(function (c) {
             var on = c.getAttribute('href') === '#' + en.target.id; c.classList.toggle('on', on);
-            if (on) c.scrollIntoView({ inline: 'center', block: 'nearest' });
+            // Scroll only the chip bar sideways. Never call scrollIntoView here:
+            // it also moves the page and fights the reader's scroll (page "sticks").
+            if (on) {
+              var bar = c.parentNode;
+              var left = c.offsetLeft - (bar.clientWidth - c.offsetWidth) / 2;
+              if (Math.abs(bar.scrollLeft - left) > 4) bar.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+            }
           });
         }
       });
