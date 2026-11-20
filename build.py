@@ -306,7 +306,7 @@ def main():
 <section class="lib"><h2 class="lh">📚 Library</h2><div class="tiles">{tiles}</div></section>
 <section class="lib"><h2 class="lh">⭐ Start here</h2><div class="feats">{feat_html}</div></section>
 <section class="lib"><h2 class="lh">🧰 Tools</h2><div class="tools">{tool_tiles}</div></section>
-<section class="about"><b>👋 About</b><p>Written by Serhii Shabalin, MD — internal medicine resident and Assistant Chief Resident at a community teaching hospital, trained in Kyiv, first-generation physician. Built for the wards and the ABIM boards. Every page lists its sources and review date. Educational use only.</p></section>"""
+<section class="about"><b>👋 About</b><p>Written by Serhii Shabalin, MD — Internal Medicine resident at a community teaching hospital in New Jersey, trained in Kyiv, first-generation physician. Built for real-life clinical wards and the ABIM boards. Every page lists its sources and review date. Educational use only.</p></section>"""
     hdr = f"""<header class="topbar home"><a class="back brand" href="index.html"><span class="arrow">🩺</span><span class="blab">{SITE_TITLE}</span></a><div class="ttitle"></div>
 <div class="tact"><button class="tbtn" id="sbtn" aria-label="Search">🔍</button></div></header>"""
     (OUT / "index.html").write_text(shell(SITE_TITLE, body, 0, "home", hdr), encoding="utf-8")
