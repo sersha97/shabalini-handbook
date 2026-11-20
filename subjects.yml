@@ -102,7 +102,7 @@
     - {name: Geriatrics, emoji: "🧓"}
     - {name: Peri-operative, emoji: "🔪"}
     - {name: Goals of care, emoji: "🕊️"}
-  planned: [Falls, Peri-op anticoagulation, Discharge planning]
+  planned: [Falls, Discharge planning]
 
 - id: nightcalls
   name: Night Calls

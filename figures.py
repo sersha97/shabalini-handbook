@@ -747,6 +747,112 @@ def _():
         f'<div class="wl"><span class="big">{l}</span><b>{t}</b><small>{s}</small></div>' for l, t, s in rows) + "</div>"
 
 
+# ---------- anticoagulation ----------
+@fig("coag-targets")
+def _():
+    def drugs(*items):
+        return "".join(f'<span class="dg {c}">{t}</span>' for c, t in items)
+    return f"""<div class="cascade">
+<div class="cx2">
+<div class="cbox ext"><small>Extrinsic · tissue injury</small><b>Tissue factor + VII</b><span class="lab">PT / INR</span></div>
+<div class="cbox int"><small>Intrinsic · contact</small><b>XII → XI → IX (+VIII)</b><span class="lab">aPTT</span></div>
+</div>
+<div class="cdrug w">{drugs(("vka", "🟣 Warfarin: liver makes broken <b>II, VII, IX, X</b> + protein C &amp; S"))}</div>
+<div class="carr">▼</div>
+<div class="crow"><div class="cbox com"><b>X → Xa</b><small>(+V) · the amplifier</small></div>
+<div class="cdrug">{drugs(("at", "UFH · LMWH (via AT)"), ("at", "Fondaparinux (via AT)"), ("dx", "Apixaban · Rivaroxaban · Edoxaban"))}</div></div>
+<div class="carr">▼</div>
+<div class="crow"><div class="cbox thr"><b>II → IIa</b><small>thrombin</small></div>
+<div class="cdrug">{drugs(("at", "UFH (via AT)"), ("dt", "Dabigatran"), ("dt", "Argatroban · Bivalirudin (IV)"))}</div></div>
+<div class="carr">▼</div>
+<div class="cbox fib"><b>🕸️ Fibrinogen → fibrin clot</b></div>
+<div class="clegend"><span class="dg at">needs antithrombin</span><span class="dg dx">direct Xa</span><span class="dg dt">direct thrombin</span><span class="dg vka">vitamin K antagonist</span></div>
+</div>
+<p class="figcap">UFH hits Xa and IIa equally; LMWH mostly Xa; fondaparinux only Xa. That is why only <b>UFH</b> is fully reversed by protamine, and why <b>anti-Xa</b> levels read falsely high after apixaban or rivaroxaban.</p>"""
+
+
+@fig("ufh-intensity")
+def _():
+    return """<div class="spec ufh">
+<div class="specitem ua"><b>🛡️ Prophylaxis</b><span><b>Fixed</b> — not by weight</span><span>5000 U SC q8–12h</span><span>BMI ≥40 → 7500 U q8h</span></div>
+<div class="specitem nst"><b>🫀 ACS / cardiac</b><span>Weight-based, <b>capped</b></span><span>60 U/kg (max 4000)</span><span>→ 12 U/kg/h (max 1000)</span></div>
+<div class="specitem st"><b>🫁 VTE (DVT / PE)</b><span>Weight-based, actual weight</span><span>80 U/kg bolus</span><span>→ 18 U/kg/h</span></div>
+</div>
+<p class="figcap">Three dials, three indications. The <b>clot you treat</b> picks the nomogram: an arterial clot on a stent needs less heparin (plus antiplatelets) than a big venous clot. AF, valves and bridging use the low-intensity "cardiac" nomogram, often with <b>no bolus</b>.</p>"""
+
+
+@fig("warfarin-lag")
+def _():
+    rows = [("pc", "Protein C", "anti-clot guard", 8, "~8 h — leaves first → short pro-clot window"),
+            ("f7", "Factor VII", "", 6, "~6 h — makes the INR rise on day 2"),
+            ("f9", "Factor IX", "", 24, "~24 h"),
+            ("ps", "Protein S", "anti-clot guard", 42, "~40 h"),
+            ("f10", "Factor X", "", 40, "~40 h"),
+            ("f2", "Factor II", "prothrombin", 66, "~60–72 h — real protection needs II to fall → 5 days")]
+    bars = "".join(
+        f'<div class="wlrow {c}"><span class="wln"><b>{n}</b>{f"<small>{s}</small>" if s else ""}</span>'
+        f'<span class="wltrack"><span class="wlbar" style="width:{max(8, h / 72 * 100):.0f}%"></span><span class="wltxt">{t}</span></span></div>'
+        for c, n, s, h, t in rows)
+    return f"""<div class="wlag">
+<div class="wlhead"><span></span><span>Half-life after warfarin starts (bar = hours, scale 0–72 h)</span></div>
+{bars}
+<div class="wldays"><span>Day 1–2: INR up (VII gone) — <b>not protected</b></span><span>Day 5+: II low — <b>protected</b></span></div>
+</div>
+<p class="figcap">Early INR = factor VII. Real anticoagulation = factor II. Protein C (a natural anticoagulant) falls in hours → <b>overlap heparin</b> in acute clots and HIT.</p>"""
+
+
+@fig("warfarin-pills")
+def _():
+    pills = [("1", "#f4a6c0", "pink"), ("2", "#b9a3e3", "lavender"), ("2.5", "#8fd19e", "green"), ("3", "#d2b48c", "tan"),
+             ("4", "#7fb2ea", "blue"), ("5", "#f7c59f", "peach"), ("6", "#5fc9bf", "teal"), ("7.5", "#f4dc6b", "yellow"),
+             ("10", "#ffffff", "white")]
+    items = "".join(f'<div class="pill"><span class="pdot" style="--pc:{c}">{mg}</span><small>{nm}</small></div>' for mg, c, nm in pills)
+    return f"""<div class="pills">{items}</div>
+<p class="figcap">US warfarin tablet colors (mg). Asking "what color is your pill?" catches many dose errors at admission. Same colors for all US generics.</p>"""
+
+
+@fig("inr-ladder")
+def _():
+    steps = [("g", "INR above range, &lt;4.5", "No bleeding", "Hold 0–1 dose · lower weekly dose 5–15% · recheck in 3–7 days"),
+             ("y", "INR 4.5–10", "No bleeding", "Hold 1–2 doses · <b>no routine vitamin K</b> (1–2.5 mg PO if high bleed risk) · INR in 24–48 h"),
+             ("o", "INR &gt;10", "No bleeding", "Hold · <b>vitamin K 2.5–5 mg PO</b> · INR in 24 h · resume lower dose"),
+             ("r", "Major or life-threatening bleed", "Any INR", "Stop · <b>4F-PCC</b> + <b>vitamin K 5–10 mg IV</b> · FFP only if no PCC · find the source")]
+    return '<ol class="ladder">' + "".join(
+        f'<li class="{c}"><div class="ldh"><b>{a}</b><span>{b}</span></div><div class="lt">{t}</div></li>' for c, a, b, t in steps) + "</ol>"
+
+
+@fig("vest")
+def _():
+    rows = [("V", "Valve — mechanical", "any mechanical <b>mitral</b>; older caged-ball / tilting-disc aortic; aortic + risk factor"),
+            ("E", "Embolic stroke or TIA &lt;3 months", "includes systemic embolism; also rheumatic valve disease with AF"),
+            ("S", "Severe thrombophilia", "antiphospholipid syndrome; protein C, S or antithrombin deficiency"),
+            ("T", "Thrombosis (VTE) &lt;3 months", "or VTE that came back while on warfarin")]
+    return ('<div class="mnem vestm"><div class="mnemt">🦺 Bridge only the patient wearing a <b>VEST</b> (warfarin only — never DOACs)</div>' + "".join(
+        f'<div class="wl"><span class="big">{l}</span><b>{t}</b><small>{s}</small></div>' for l, t, s in rows) +
+        '<div class="mnemf">Everyone else — <b>AF</b> (even high CHA₂DS₂-VASc), VTE &gt;3 months, bileaflet aortic valve without risk factors → <b>no bridge</b>.</div></div>')
+
+
+@fig("bridge-timeline")
+def _():
+    days = [-6, -5, -4, -3, -2, -1, 0, 1, 2, 3]
+    W = {-6: ("on", "💊"), 0: ("on", "💊<small>PM</small>"), 1: ("on", "💊"), 2: ("on", "💊"), 3: ("on", "💊")}
+    L = {-3: ("lm", "💉💉"), -2: ("lm", "💉💉"), -1: ("half", "💉<small>AM ½</small>"), 1: ("lm2", "💉<small>low-risk</small>"),
+         2: ("lm", "💉💉"), 3: ("lm", "💉💉")}
+    K = {-1: ("inr", "🧪<small>INR</small>"), 0: ("op", "✂️<small>OR</small>"), 3: ("inr", "🧪<small>INR ≥2?</small>")}
+
+    def track(name, cls, d):
+        cells = "".join(f'<span class="bc {d.get(x, ("off", ""))[0]}">{d.get(x, ("off", ""))[1]}</span>' for x in days)
+        return f'<div class="btrack {cls}"><span class="bname">{name}</span><div class="bcells">{cells}</div></div>'
+    head = "".join(f'<span class="bd{" d0" if x == 0 else ""}">{"Day 0" if x == 0 else (f"{x:+d}")}</span>' for x in days)
+    return f"""<div class="bridge"><div class="bscroll">
+<div class="btrack hd"><span class="bname"></span><div class="bcells">{head}</div></div>
+{track("Warfarin", "w", W)}
+{track("LMWH bridge (VEST only)", "l", L)}
+{track("Checks", "k", K)}
+</div></div>
+<p class="figcap">Last warfarin day −6 → no warfarin days −5 to −1 → INR day −1 (&gt;1.5 → vitamin K 1–2 mg PO). LMWH 1 mg/kg q12h days −3 and −2, morning-only half-day dose on day −1. Warfarin restarts the evening of surgery. LMWH restarts 24 h after (low/moderate bleed) or 48–72 h after (high bleed) and stops when INR ≥2.</p>"""
+
+
 def render_fig(name):
     return f'<figure class="hbfig">{FIGS[name]()}</figure>'
 
