@@ -302,7 +302,7 @@ tr:last-child td{border-bottom:0}
 .dcol.maj{background:color-mix(in srgb,#d64545 8%,var(--card))}.dcol.maj h4{color:#d64545}
 .dcol.min{background:color-mix(in srgb,#2b7bb9 8%,var(--card))}.dcol.min h4{color:#2b7bb9}
 .di{font-size:13px;padding:6px 0;border-top:1px solid var(--line)}.di:first-of-type{border-top:0}
-.di>b{display:block}.di small{color:var(--ink2);font-size:12.3px}
+.di .dt{display:block}.di small{color:var(--ink2);font-size:12.3px}
 .dres{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:13px}
 .dres span{flex:1 1 240px;padding:8px 10px;border-radius:10px}
 .dres .def{background:color-mix(in srgb,#3f9c5a 14%,var(--card))}.dres .pos{background:color-mix(in srgb,#f2b134 18%,var(--card))}
@@ -323,3 +323,10 @@ tr:last-child td{border-bottom:0}
 @media (max-width:640px){.magnet{grid-template-columns:1fr}}
 .mg{border-radius:12px;padding:9px 10px;font-size:13px;display:flex;flex-direction:column;gap:3px;border:1px solid var(--line)}
 .mg.pm{background:color-mix(in srgb,#1b998b 12%,var(--card))}.mg.icd{background:color-mix(in srgb,#d64545 10%,var(--card))}.mg.ll{background:color-mix(in srgb,#f2b134 15%,var(--card))}
+
+/* larger chart text so it stays readable on phones */
+.autoreg .t2{font-size:15px}.autoreg .sm{font-size:14px}.autoreg .t3n,.autoreg .t3h{font-size:16px}
+.autoreg .ptr{stroke:#d64545;stroke-width:1.5;fill:none}
+.asg .t2{font-size:16px}.asg .t3{font-size:17px}.asg .sm{font-size:15px}
+.aorta .t1{font-size:18px}.aorta .t2{font-size:15px}.aorta .sm{font-size:13px}
+.jph .hl{font-size:12.5px}

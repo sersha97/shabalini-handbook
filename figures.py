@@ -539,9 +539,9 @@ def _():
 <text x="18" y="115" class="t2" transform="rotate(-90 18 115)">Brain blood flow →</text>
 <path d="M60 190 C80 120 90 110 110 110 L210 110 C240 110 250 60 280 30" class="cv n"/>
 <path d="M120 195 C150 122 160 116 180 116 L300 116 C330 116 340 60 370 30" class="cv h"/>
-<text x="150" y="96" class="t3n">Normal</text><text x="250" y="138" class="t3h">Chronic HTN</text>
-<circle cx="141" cy="150" r="6" class="dot"/>
-<text x="152" y="172" class="t2 sm" text-anchor="start">"Normal" BP on a shifted curve</text><text x="152" y="188" class="t2 sm red" text-anchor="start">= low flow, ischemia</text>
+<text x="120" y="96" class="t3n">Normal</text><text x="250" y="138" class="t3h">Chronic HTN</text>
+<circle cx="141" cy="150" r="6" class="dot"/><path d="M147 154 L238 176" class="ptr"/>
+<text x="242" y="176" class="t2 sm" style="text-anchor:start">"Normal" BP here</text><text x="242" y="194" class="t2 sm red" style="text-anchor:start">= low flow → ischemia</text>
 </svg>
 <p class="figcap">The brain (and kidney, heart) keep flow stable across a range of pressures. After years of high BP, that range <b>moves to the right</b>. A "normal" BP can now be <b>too low for this patient</b> → stroke, MI, AKI. That is why we lower BP <b>in steps</b>, not to normal in one hour.</p>'''
 
@@ -587,9 +587,9 @@ def _():
 def _():
     return '''<div class="duke">
 <div class="dcol maj"><h4>MAJOR</h4>
-<div class="di"><b>🧫 Microbiology</b><small>Typical organism in ≥2 separate cultures (S. aureus, S. lugdunensis, E. faecalis, viridans/most strep, HACEK, Granulicatella, Abiotrophia, Gemella) · non-typical in ≥3 sets · Coxiella (culture or phase I IgG &gt;1:800) · positive PCR/sequencing</small></div>
-<div class="di"><b>🖥️ Imaging</b><small>Echo or cardiac CT: vegetation, perforation, abscess, pseudoaneurysm, fistula, new prosthetic dehiscence · <b>PET/CT</b>: abnormal uptake at valve, graft or leads (NEW)</small></div>
-<div class="di"><b>🔪 Surgery</b><small>IE seen by the surgeon at operation (NEW)</small></div>
+<div class="di"><b class="dt">🧫 Microbiology</b><small>Typical organism in ≥2 separate cultures (S. aureus, S. lugdunensis, E. faecalis, viridans/most strep, HACEK, Granulicatella, Abiotrophia, Gemella) · non-typical in ≥3 sets · Coxiella (culture or phase I IgG &gt;1:800) · positive PCR/sequencing</small></div>
+<div class="di"><b class="dt">🖥️ Imaging</b><small>Echo or cardiac CT: vegetation, perforation, abscess, pseudoaneurysm, fistula, new prosthetic dehiscence · <b>PET/CT</b>: abnormal uptake at valve, graft or leads (NEW)</small></div>
+<div class="di"><b class="dt">🔪 Surgery</b><small>IE seen by the surgeon at operation (NEW)</small></div>
 </div>
 <div class="dcol min"><h4>MINOR</h4>
 <div class="di">🫀 Predisposition (prior IE, prosthetic valve, IDU, CIED, congenital/valve disease)</div>

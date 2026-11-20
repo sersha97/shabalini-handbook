@@ -36,6 +36,17 @@ CALLOUTS = {
 
 
 # ---------- Markdown helpers ----------
+
+def _asset_version():
+    import hashlib
+    h = hashlib.sha1()
+    for f in sorted((ROOT / "assets").iterdir()) + sorted((ROOT / "content").rglob("*.md")) + [ROOT / "figures.py"]:
+        h.update(f.read_bytes())
+    return h.hexdigest()[:10]
+
+
+ASSET_V = _asset_version()  # cache-buster so Cloudflare/browsers never serve an old stylesheet
+
 def md(text):
     return markdown.markdown(text, extensions=["tables", "sane_lists", "attr_list", "md_in_html"])
 
@@ -156,7 +167,7 @@ def shell(title, body, depth, page_class="", topbar=""):
 <meta name="description" content="A practical hospital medicine handbook for the wards and the boards.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{p}assets/style.css">
+<link rel="stylesheet" href="{p}assets/style.css?v={ASSET_V}">
 </head>
 <body class="{page_class}" data-root="{p}">
 {topbar}
@@ -164,7 +175,7 @@ def shell(title, body, depth, page_class="", topbar=""):
 <footer class="foot"><p>📘 <b>{SITE_TITLE}</b> · by Serhii Shabalin, MD · educational use only — <a href="{p}tools/disclaimer.html">not medical advice</a>. Check doses and local protocols.</p></footer>
 <div id="search" class="search" hidden><div class="sbox"><div class="shead"><span>🔍</span><input id="q" type="search" placeholder="Search: AF, hyponatremia, Light's…" autocomplete="off"><button class="sclose" aria-label="Close">✕</button></div><ul id="sres"></ul></div></div>
 <button id="totop" class="totop" aria-label="Back to top" hidden>↑</button>
-<script src="{p}assets/search-index.js"></script><script src="{p}assets/app.js"></script>
+<script src="{p}assets/search-index.js?v={ASSET_V}"></script><script src="{p}assets/app.js?v={ASSET_V}"></script>
 </body></html>"""
 
 
