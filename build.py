@@ -17,6 +17,7 @@ from pathlib import Path
 import markdown
 import yaml
 
+import emojify
 import figures
 
 ROOT = Path(__file__).parent
@@ -41,7 +42,8 @@ CALLOUTS = {
 def _asset_version():
     import hashlib
     h = hashlib.sha1()
-    for f in sorted((ROOT / "assets").iterdir()) + sorted((ROOT / "content").rglob("*.md")) + [ROOT / "figures.py"]:
+    files = [f for f in sorted((ROOT / "assets").iterdir()) if f.is_file()]
+    for f in files + sorted((ROOT / "content").rglob("*.md")) + [ROOT / "figures.py", ROOT / "emojify.py"]:
         h.update(f.read_bytes())
     return h.hexdigest()[:10]
 
@@ -161,7 +163,7 @@ def tables_wrap(h):
 # ---------- Templates ----------
 def shell(title, body, depth, page_class="", topbar=""):
     p = "../" * depth
-    return f"""<!DOCTYPE html>
+    return emojify.page(f"""<!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(title)}</title>
@@ -173,11 +175,11 @@ def shell(title, body, depth, page_class="", topbar=""):
 <body class="{page_class}" data-root="{p}">
 {topbar}
 <main id="main">{body}</main>
-<footer class="foot"><p>📘 <b>{SITE_TITLE}</b> · by Serhii Shabalin, MD · educational use only — <a href="{p}tools/disclaimer.html">not medical advice</a>. Check doses and local protocols.</p></footer>
+<footer class="foot"><p>📘 <b>{SITE_TITLE}</b> · by Serhii Shabalin, MD · educational use only — <a href="{p}tools/disclaimer.html">not medical advice</a>. Check doses and local protocols.</p><p class="credit">Emoji: <a href="https://github.com/jdecked/twemoji">Twemoji</a>, CC-BY 4.0</p></footer>
 <div id="search" class="search" hidden><div class="sbox"><div class="shead"><span>🔍</span><input id="q" type="search" placeholder="Search: AF, hyponatremia, Light's…" autocomplete="off"><button class="sclose" aria-label="Close">✕</button></div><ul id="sres"></ul></div></div>
 <button id="totop" class="totop" aria-label="Back to top" hidden>↑</button>
 <script src="{p}assets/search-index.js?v={ASSET_V}"></script><script src="{p}assets/app.js?v={ASSET_V}"></script>
-</body></html>"""
+</body></html>""", p)
 
 
 def topbar(back_href, back_label, title, depth, show_toc=False, color="#0f2a43"):
@@ -196,7 +198,8 @@ def main():
         shutil.rmtree(OUT)
     (OUT / "assets").mkdir(parents=True)
     for f in (ROOT / "assets").iterdir():
-        shutil.copy(f, OUT / "assets" / f.name)
+        if f.is_file():
+            shutil.copy(f, OUT / "assets" / f.name)
 
     index = []
     all_topics = []
@@ -309,6 +312,7 @@ def main():
     feat_html = "".join(f'<a class="feat" href="{t["subject"]["id"]}/{t["slug"]}.html" style="--sc:{t["subject"]["color"]}"><span>{t["emoji"]}</span><b>{html.escape(t["title"])}</b><small>{t["subject"]["emoji"]} {html.escape(t["subject"]["name"])}</small></a>' for t in feat)
     body = f"""
 <section class="hero">
+<div class="hdeco" aria-hidden="true">❤️🫁🧠🦠🩸🧂</div>
 <div class="hlogo">🩺📘</div>
 <h1>Hospitalist<br><span>Handbook</span></h1>
 <p>Fast, practical, evidence-based. Pathophysiology in 60 seconds, criteria you can trust, and what to do at 3 AM — plus a board corner on every page.</p>
@@ -323,7 +327,21 @@ def main():
 <div class="tact"><button class="tbtn" id="sbtn" aria-label="Search">🔍</button></div></header>"""
     (OUT / "index.html").write_text(shell(SITE_TITLE, body, 0, "home", hdr), encoding="utf-8")
 
-    (OUT / "assets" / "search-index.js").write_text("window.HB_INDEX=" + json.dumps(index, ensure_ascii=False) + ";", encoding="utf-8")
+    # emoji used by the search box (results are drawn in the browser)
+    js_text = (ROOT / "assets" / "app.js").read_text(encoding="utf-8")
+    for d in index:
+        for txt in (d["e"], d["x"][:4000]):
+            for _, _, e in emojify._matches(txt):
+                emojify.ensure(e)
+    for _, _, e in emojify._matches(js_text):
+        emojify.ensure(e)
+    (OUT / "assets" / "emoji").mkdir()
+    for code in sorted(set(emojify.USED.values())):
+        shutil.copy(emojify.EMOJI_DIR / f"{code}.svg", OUT / "assets" / "emoji" / f"{code}.svg")
+    (OUT / "assets" / "search-index.js").write_text(
+        "window.HB_INDEX=" + json.dumps(index, ensure_ascii=False) + ";\n"
+        "window.HB_EMOJI=" + json.dumps(emojify.USED, ensure_ascii=False) + ";", encoding="utf-8")
+    emojify.report()
     print(f"Built {total} chapters in {len(subjects)} subjects, {len(tools)} tools -> {OUT}")
 
 

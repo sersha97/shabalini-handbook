@@ -86,6 +86,10 @@
   var q = $('#q'), res = $('#sres'), IDX = window.HB_INDEX || [];
   function openSearch() { search.hidden = false; document.body.style.overflow = 'hidden'; q.value = ''; render(''); setTimeout(function () { q.focus(); }, 20); }
   ['#sbtn', '#sbtn2'].forEach(function (s) { var b = $(s); if (b) b.addEventListener('click', openSearch); });
+  // emoji -> Twemoji image (same look on every device); map is written by build.py
+  var EMO = window.HB_EMOJI || {}, emoKeys = Object.keys(EMO).sort(function (a, b) { return b.length - a.length; });
+  var emoRe = emoKeys.length ? new RegExp('(' + emoKeys.map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')\uFE0F?', 'g') : null;
+  function emo(s) { return emoRe ? s.replace(emoRe, function (m, e) { return '<img class="emoji" draggable="false" alt="' + e + '" src="' + root + 'assets/emoji/' + EMO[e] + '.svg">'; }) : s; }
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
   function render(term) {
@@ -113,8 +117,8 @@
     res.innerHTML = out.slice(0, 20).map(function (r, n) {
       var sn = esc(r.snip);
       words.forEach(function (w) { if (w.length > 1) sn = sn.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig'), '<mark>$1</mark>'); });
-      return '<li><a href="' + root + r.d.u + '"' + (n === 0 ? ' class="sel"' : '') + '><span class="re">' + r.d.e + '</span><span><b>' + esc(r.d.t) + '</b><small>' + esc(r.d.s) + ' · ' + sn + '</small></span></a></li>';
-    }).join('') || '<li style="padding:14px;color:var(--mute)">No match yet. Try another word. 🧐</li>';
+      return '<li><a href="' + root + r.d.u + '"' + (n === 0 ? ' class="sel"' : '') + '><span class="re">' + emo(esc(r.d.e)) + '</span><span><b>' + emo(esc(r.d.t)) + '</b><small>' + esc(r.d.s) + ' · ' + emo(sn) + '</small></span></a></li>';
+    }).join('') || '<li style="padding:14px;color:var(--mute)">' + emo('No match yet. Try another word. 🧐') + '</li>';
   }
   if (q) {
     q.addEventListener('input', function () { render(q.value); });

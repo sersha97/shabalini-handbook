@@ -53,6 +53,14 @@ content
 {{fig:ef-spectrum}}  Diagram: ef-spectrum hemo-profiles acs-spectrum af-bouncer hfref-pillars sepsis-hour1 acid-base hypona-algo cirrhosis-map pe-risk stroke-time
 ```
 
+## Emoji
+
+Use any emoji in chapters, `subjects.yml` or figures. The build turns each one into a small
+[Twemoji](https://github.com/jdecked/twemoji) SVG image (`assets/emoji/`), so it looks the same on
+Mac, Windows, Android, iPhone and every browser — no more empty rectangles (□) on older devices.
+A new emoji is downloaded automatically on the next build; commit the new file in `assets/emoji/`.
+Inside an SVG figure, put an emoji in its own `<text class="emo">` element (not mixed with words).
+
 ## Deploy to shabalini.com/handbook
 
 Upload the contents of `site/` to the server folder for `/handbook/` (FTP in ADM.TOOLS), or use the GitHub Action in `.github/workflows/deploy.yml` (same FTP secrets as before: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`, `FTP_SERVER_DIR`).

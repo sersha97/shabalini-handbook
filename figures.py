@@ -914,7 +914,7 @@ def _():
     return """<svg viewBox="0 0 400 236" class="diag seesaw" role="img" aria-label="Phosphate and calcium seesaw">
 <text x="88" y="26" class="st1 p">Phos ↑</text><text x="88" y="47" class="st2">binds calcium</text>
 <text x="314" y="26" class="st1 c">Ionized Ca ↓</text><text x="314" y="47" class="st2">tetany · long QT</text>
-<text x="200" y="92" class="st1">💎 Ca-P crystals</text><text x="200" y="113" class="st2">vessels · skin · kidney</text>
+<text x="136" y="92" class="emo" font-size="20">💎</text><text x="213" y="92" class="st1">Ca-P crystals</text><text x="200" y="113" class="st2">vessels · skin · kidney</text>
 <polygon points="200,192 180,228 220,228" class="fulcrum"/>
 <g transform="rotate(-13 200 192)">
 <rect x="28" y="186" width="344" height="12" rx="6" class="plank"/>
