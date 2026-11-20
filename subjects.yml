@@ -47,7 +47,7 @@
     - {name: Kidney, emoji: "🫘"}
     - {name: Electrolytes, emoji: "⚖️"}
     - {name: Acid–base, emoji: "🧪"}
-  planned: [Hypercalcemia, Hypokalemia / Mg / Phos, Hypernatremia, Rhabdomyolysis]
+  planned: [Hypercalcemia, Hypokalemia / Mg / Phos, Rhabdomyolysis]
 
 - id: gi
   name: GI & Liver

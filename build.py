@@ -32,6 +32,7 @@ CALLOUTS = {
     "dose": ("💊", "Dose check"),
     "board": ("🎓", "Board corner"),
     "new": ("🆕", "What's new"),
+    "mnemonic": ("🧠", "Mnemonic"),
 }
 
 

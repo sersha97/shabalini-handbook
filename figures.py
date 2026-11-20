@@ -640,6 +640,113 @@ def _():
 <p class="figcap">DDD = paces and senses both chambers, inhibits or triggers. VVI = paces and senses the ventricle, inhibits if it sees a native beat. Magnet response differs by vendor and programming — confirm with the device clinic.</p>'''
 
 
+
+# ---------- Hypernatremia ----------
+def _blob(cx, cy, r, amp, k, seed, n=90):
+    """Wrinkly closed path (raisin edge)."""
+    rnd = random.Random(seed)
+    ph = [rnd.uniform(0, 6.28) for _ in range(3)]
+    pts = []
+    for i in range(n):
+        a = 2 * math.pi * i / n
+        rr = r + amp * math.sin(k * a + ph[0]) + amp * 0.5 * math.sin((k + 3) * a + ph[1]) + amp * 0.3 * math.sin(2 * a + ph[2])
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    return "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + " Z"
+
+
+def _face(cx, cy, s, mood):
+    eL, eR, ey = cx - 14 * s, cx + 14 * s, cy - 6 * s
+    if mood == "happy":
+        eyes = f'<circle class="eye" cx="{eL:.0f}" cy="{ey:.0f}" r="{4*s:.1f}"/><circle class="eye" cx="{eR:.0f}" cy="{ey:.0f}" r="{4*s:.1f}"/>'
+        mouth = f'<path class="mouth" d="M{cx-14*s:.0f},{cy+8*s:.0f} Q{cx:.0f},{cy+22*s:.0f} {cx+14*s:.0f},{cy+8*s:.0f}"/>'
+    elif mood == "dizzy":
+        d = 4 * s
+        eyes = "".join(f'<path class="mouth" d="M{x-d:.0f},{ey-d:.0f} L{x+d:.0f},{ey+d:.0f} M{x+d:.0f},{ey-d:.0f} L{x-d:.0f},{ey+d:.0f}"/>' for x in (eL, eR))
+        mouth = f'<path class="mouth" d="M{cx-10*s:.0f},{cy+14*s:.0f} q{5*s:.0f},-{6*s:.0f} {10*s:.0f},0 q{5*s:.0f},{6*s:.0f} {10*s:.0f},0"/>'
+    elif mood == "cool":
+        eyes = (f'<rect class="shade" x="{eL-9*s:.0f}" y="{ey-5*s:.0f}" width="{18*s:.0f}" height="{10*s:.0f}" rx="{4*s:.0f}"/>'
+                f'<rect class="shade" x="{eR-9*s:.0f}" y="{ey-5*s:.0f}" width="{18*s:.0f}" height="{10*s:.0f}" rx="{4*s:.0f}"/>'
+                f'<path class="bridge" d="M{eL:.0f},{ey:.0f} L{eR:.0f},{ey:.0f}"/>')
+        mouth = f'<path class="mouth" d="M{cx-10*s:.0f},{cy+12*s:.0f} Q{cx+2*s:.0f},{cy+18*s:.0f} {cx+12*s:.0f},{cy+8*s:.0f}"/>'
+    else:  # panic
+        eyes = (f'<circle class="eyew" cx="{eL:.0f}" cy="{ey:.0f}" r="{7*s:.1f}"/><circle class="pupil" cx="{eL:.0f}" cy="{ey:.0f}" r="{3*s:.1f}"/>'
+                f'<circle class="eyew" cx="{eR:.0f}" cy="{ey:.0f}" r="{7*s:.1f}"/><circle class="pupil" cx="{eR:.0f}" cy="{ey:.0f}" r="{3*s:.1f}"/>')
+        mouth = f'<ellipse class="mouthf" cx="{cx:.0f}" cy="{cy+14*s:.0f}" rx="{6*s:.0f}" ry="{8*s:.0f}"/>'
+    return eyes + mouth
+
+
+def _drop(x, y, s=1.0, cls="drop"):
+    return f'<path class="{cls}" d="M{x:.0f},{y-9*s:.0f} C{x+7*s:.0f},{y:.0f} {x+6*s:.0f},{y+7*s:.0f} {x:.0f},{y+7*s:.0f} C{x-6*s:.0f},{y+7*s:.0f} {x-7*s:.0f},{y:.0f} {x:.0f},{y-9*s:.0f} Z"/>'
+
+
+@fig("raisin-brain")
+def _():
+    sk = '<circle class="skull" cx="100" cy="104" r="88"/>'
+    vein = lambda d: f'<path class="vein" d="{d}"/>'
+    # 1 normal grape
+    p1 = (sk + vein("M100,16 L100,36") + '<circle class="grape" cx="100" cy="104" r="68"/>'
+          '<ellipse class="shine" cx="74" cy="72" rx="14" ry="8" transform="rotate(-30 74 72)"/>' + _face(100, 104, 1.6, "happy"))
+    # 2 acute: shrunk raisin, torn vein, water leaving
+    p2 = (sk + vein("M100,16 L100,40") + vein("M100,52 L100,64") +
+          '<path class="tear" d="M92,44 L108,48"/>' + _drop(112, 52, .7, "blood") + _drop(118, 64, .5, "blood") +
+          f'<path class="raisin" d="{_blob(100, 110, 40, 4, 9, 3)}"/>' + _face(100, 110, 1.05, "dizzy") +
+          _drop(40, 104, 1) + _drop(160, 100, 1) + _drop(56, 160, .9) + _drop(150, 158, .9) +
+          '<path class="out" d="M62,104 L48,104 M140,100 L152,100 M72,146 L62,154 M130,144 L142,152"/>')
+    # 3 chronic: adapted with osmolyte dots and sunglasses
+    dots = "".join(f'<circle class="osm o{i%3}" cx="{100+44*math.cos(a):.0f}" cy="{110+40*math.sin(a):.0f}" r="5"/>'
+                   for i, a in enumerate([0.3, 1.0, 1.7, 2.4, 3.1, 3.8, 4.5, 5.2, 5.9]))
+    p3 = (sk + vein("M100,16 L100,42") + f'<path class="raisin2" d="{_blob(100, 106, 62, 2.2, 11, 5)}"/>' + dots +
+          _face(100, 100, 1.45, "cool"))
+    # 4 too much water too fast: swollen, panic, water rushing in
+    p4 = ('<circle class="skull hot" cx="100" cy="104" r="88"/>' + '<circle class="grape big" cx="100" cy="104" r="84"/>' +
+          _face(100, 104, 1.8, "panic") +
+          _drop(30, 30, 1.1) + _drop(170, 30, 1.1) + _drop(18, 178, 1) + _drop(182, 178, 1) +
+          '<path class="in" d="M38,40 L52,54 M162,40 L148,54 M28,170 L40,160 M172,170 L160,160"/>')
+    panels = [
+        ("ok", "Na 140", "Happy grape", "Water in = water out. The cell has its normal size."),
+        ("bad", "Na ↑ fast (hours)", "Salty raisin", "Water leaves the cell. The brain shrinks. Bridging veins stretch and tear → <b>bleed</b>."),
+        ("mid", "Na ↑ slowly (&gt;48 h)", "Smart raisin", "The brain makes its own osmolytes (the dots). Size goes back to near normal."),
+        ("bad", "Water too fast", "Water balloon", "Osmolytes stay, water rushes in → <b>cerebral edema</b>, seizures (mostly in children)."),
+    ]
+    svgs = [p1, p2, p3, p4]
+    cells = "".join(
+        f'<div class="rbp {c}"><span class="rbtag">{tag}</span>'
+        f'<svg viewBox="0 0 200 200" class="rbs" role="img" aria-label="{name}">{s}</svg>'
+        f'<b>{name}</b><small>{txt}</small></div>'
+        for (c, tag, name, txt), s in zip(panels, svgs))
+    return (f'<div class="rbrain">{cells}</div>'
+            '<p class="figcap">Sodium does not cross the cell membrane easily — <b>water</b> moves. High Na pulls water out of brain cells. '
+            'After ~48 h the brain adapts. That is why <b>acute</b> hypernatremia can be fixed fast, and <b>chronic</b> hypernatremia is fixed at a steady pace.</p>')
+
+
+@fig("hyperna-kidney")
+def _():
+    return """<div class="tree hnk">
+<div class="node top">🔥 Na &gt;145 = too little water for the salt → ask the kidney: <b>urine osm</b> + <b>urine volume</b></div>
+<div class="row3">
+<div class="node k1"><span class="ke">🦸</span><b>U-osm &gt;600</b><small>"I am saving every drop!" Kidney works. Water is lost <b>somewhere else</b> or never came in.</small><i>Skin, sweat, fever, burns · diarrhea, lactulose · no water access</i></div>
+<div class="node k2"><span class="ke">🤷</span><b>U-osm 300–600</b><small>"I am trying, but…" Partial DI <b>or</b> osmotic diuresis.</small><i>Glucose · urea (high-protein feeds, ATN recovery) · mannitol · loop diuretics</i></div>
+<div class="node k3"><span class="ke">🚰</span><b>U-osm &lt;300</b><small>"My drain is stuck open!" Big volume of dilute urine = <b>DI</b>.</small><i>Give desmopressin and watch the urine osm</i></div>
+</div>
+<div class="row2">
+<div class="node hl"><b>U-osm rises &gt;50%</b> after desmopressin<br><small>→ <b>central DI</b> (AVP deficiency): pituitary surgery, head trauma, tumor</small></div>
+<div class="node"><b>Little or no rise</b> (&lt;10–50%)<br><small>→ <b>nephrogenic DI</b> (AVP resistance): lithium, high Ca, low K</small></div>
+</div>
+</div>
+<p class="figcap">Osmotic diuresis check: total urine solute = U-osm × 24-h urine volume. More than ~1000 mOsm/day = solute is pulling the water out.</p>"""
+
+
+@fig("water-mnemonic")
+def _():
+    rows = [("W", "Work out the water deficit", "TBW × (Na ÷ 140 − 1)"),
+            ("A", "Acute or chronic?", "&lt;48 h → fast · &gt;48 h or unknown → ~10 per day"),
+            ("T", "Treat the cause", "close the drain: adjust lactulose, give DDAVP, fix glucose"),
+            ("E", "Every 4–6 h a sodium", "q2–4 h if acute or Na &gt;165"),
+            ("R", "Replace ongoing losses", "urine, stool, fever, insensible ~1 L/day")]
+    return '<div class="water">' + "".join(
+        f'<div class="wl"><span class="big">{l}</span><b>{t}</b><small>{s}</small></div>' for l, t, s in rows) + "</div>"
+
+
 def render_fig(name):
     return f'<figure class="hbfig">{FIGS[name]()}</figure>'
 

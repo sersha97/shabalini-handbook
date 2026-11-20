@@ -330,3 +330,38 @@ tr:last-child td{border-bottom:0}
 .asg .t2{font-size:16px}.asg .t3{font-size:17px}.asg .sm{font-size:15px}
 .aorta .t1{font-size:18px}.aorta .t2{font-size:15px}.aorta .sm{font-size:13px}
 .jph .hl{font-size:12.5px}
+/* ---- hypernatremia: salty-raisin brain, ask-the-kidney, WATER ---- */
+.callout.mnemonic{border-color:#d1499b;background:color-mix(in srgb,#d1499b 9%,var(--card))}
+.callout.mnemonic .ctitle{color:#b8327f}
+@media (prefers-color-scheme:dark){.callout.mnemonic .ctitle{color:#f08cc6}}
+.rbrain{--face:#2b1a3d;--grape:color-mix(in srgb,#8a5cc2 45%,var(--card));--raisin:color-mix(in srgb,#7a4a2a 55%,var(--card));display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (prefers-color-scheme:dark){.rbrain{--face:#f6efff;--grape:color-mix(in srgb,#8a5cc2 60%,var(--card));--raisin:color-mix(in srgb,#a0673d 60%,var(--card))}}
+@media (max-width:640px){.rbrain{grid-template-columns:1fr 1fr}}
+.rbp{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:26px 8px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card)}
+.rbp.ok{background:color-mix(in srgb,#3f9c5a 8%,var(--card))}.rbp.bad{background:color-mix(in srgb,#d64545 8%,var(--card))}.rbp.mid{background:color-mix(in srgb,#f2b134 10%,var(--card))}
+.rbtag{position:absolute;top:6px;left:50%;transform:translateX(-50%);font:700 11.5px var(--sans);padding:2px 9px;border-radius:99px;white-space:nowrap;background:var(--navy);color:#fff}
+.rbp.bad .rbtag{background:#c43d3d}.rbp.mid .rbtag{background:#b7860b}.rbp.ok .rbtag{background:#2f8a4c}
+.rbp b{font-size:14.5px}.rbp small{font-size:12.5px;color:var(--ink2);line-height:1.35}
+.rbs{width:100%;max-width:170px;height:auto}
+.rbs .skull{fill:none;stroke:var(--mute);stroke-width:5;stroke-dasharray:2 0;opacity:.7}.rbs .skull.hot{stroke:#d64545;opacity:1;stroke-width:6}
+.rbs .grape{fill:var(--grape);stroke:#8a5cc2;stroke-width:3}.rbs .grape.big{stroke:#d64545}
+.rbs .shine{fill:#fff;opacity:.45}
+.rbs .raisin{fill:var(--raisin);stroke:#7a4a2a;stroke-width:3}.rbs .raisin2{fill:var(--grape);stroke:#8a5cc2;stroke-width:3}
+.rbs .eye{fill:var(--face)}.rbs .eyew{fill:#fff;stroke:var(--face);stroke-width:2}
+.rbs .mouth{fill:none;stroke:var(--face);stroke-width:3.2;stroke-linecap:round}.rbs .mouthf{fill:var(--face)}
+.rbs .shade{fill:#14141c;stroke:#14141c;stroke-width:1}.rbs .bridge{stroke:#14141c;stroke-width:3}.rbs .pupil{fill:#2b1a3d}
+.rbs .vein{stroke:#d64545;stroke-width:4;stroke-linecap:round;fill:none}.rbs .tear{stroke:#d64545;stroke-width:2;stroke-dasharray:3 3}
+.rbs .blood{fill:#d64545}.rbs .drop{fill:#2b9fd9}
+.rbs .out,.rbs .in{stroke:#2b9fd9;stroke-width:3;stroke-linecap:round;fill:none}
+.rbs .osm{stroke:var(--face);stroke-width:1}.rbs .o0{fill:#f2b134}.rbs .o1{fill:#1b998b}.rbs .o2{fill:#e4572e}
+.hnk .node{display:flex;flex-direction:column;gap:3px;align-items:center}
+.hnk .ke{font-size:26px;line-height:1}.hnk .node b{font-size:14px}.hnk .node small{font-size:12.5px;color:var(--ink2)}
+.hnk .node i{font-style:normal;font-size:12px;color:var(--mute);border-top:1px dashed var(--line);padding-top:4px;margin-top:2px}
+.hnk .node.top{display:block;color:#fff}.hnk .node.top b{color:#fff;font-size:inherit}
+.hnk .k1{background:color-mix(in srgb,#3f9c5a 10%,var(--card));border-color:color-mix(in srgb,#3f9c5a 40%,transparent)}
+.hnk .k2{background:color-mix(in srgb,#f2b134 12%,var(--card));border-color:color-mix(in srgb,#f2b134 45%,transparent)}
+.hnk .k3{background:color-mix(in srgb,#2b9fd9 11%,var(--card));border-color:color-mix(in srgb,#2b9fd9 45%,transparent)}
+.water{display:grid;gap:6px}
+.wl{display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,#2b9fd9 8%,var(--card));border:1px solid var(--line)}
+.wl .big{grid-row:1/3;font:800 30px var(--serif,Georgia),serif;color:#2b9fd9;text-align:center}
+.wl b{font-size:14.5px}.wl small{font-size:12.5px;color:var(--ink2)}
