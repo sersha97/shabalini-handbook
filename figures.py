@@ -853,6 +853,88 @@ def _():
 <p class="figcap">Last warfarin day −6 → no warfarin days −5 to −1 → INR day −1 (&gt;1.5 → vitamin K 1–2 mg PO). LMWH 1 mg/kg q12h days −3 and −2, morning-only half-day dose on day −1. Warfarin restarts the evening of surgery. LMWH restarts 24 h after (low/moderate bleed) or 48–72 h after (high bleed) and stops when INR ≥2.</p>"""
 
 
+# ---------- phosphate ----------
+@fig("phos-battery")
+def _():
+    organs = [("🫁", "Diaphragm", "weak breathing, failure to wean"), ("💪", "Muscle", "weakness, rhabdomyolysis"),
+              ("🔴", "Red cells", "hemolysis, low 2,3-DPG → poor O₂ release"), ("🧠", "Brain", "confusion, seizures"),
+              ("🫀", "Heart", "low contractility, arrhythmia"), ("🛡️", "WBC & platelets", "infection, bleeding")]
+    cards = "".join(f'<div class="pbo"><span class="pbe">{e}</span><b>{n}</b><small>{t}</small></div>' for e, n, t in organs)
+    return f"""<div class="pbat">
+<div class="pbrow"><div class="pbcell full"><span class="pbbar"><i style="width:92%"></i></span><b>Phos 3.5</b><small>ATP full · all systems go</small></div>
+<div class="pbcell low"><span class="pbbar"><i style="width:14%"></i></span><b>Phos &lt;1.0</b><small>ATP empty · big users fail first</small></div></div>
+<div class="pborg">{cards}</div></div>
+<p class="figcap">Phosphate = the <b>P in ATP</b>. When the battery runs flat, the organs that burn the most energy stop first.</p>"""
+
+
+@fig("hypophos-3s")
+def _():
+    rows = [("S", "Shift into cells", "<b>refeeding</b> · insulin / DKA treatment · glucose · respiratory alkalosis · hungry bone · sepsis · leukemia blast crisis"),
+            ("S", "Spill (kidney)", "<b>hyperPTH</b> · <b>FGF23</b> (ferric carboxymaltose, XLH, tumor) · Fanconi (tenofovir, ifosfamide, myeloma) · acetazolamide · osmotic diuresis · volume expansion"),
+            ("S", "Short supply (gut)", "poor intake / starvation · <b>alcohol</b> · vitamin D deficiency · malabsorption, diarrhea · <b>binders &amp; antacids</b> (Al, Mg, Ca, sevelamer)"),
+            ("S", "Spun out", "<b>CRRT</b> / dialysis effluent")]
+    return ('<div class="mnem phm"><div class="mnemt">🧲 Low phos — the <b>4 S\'s</b></div>' + "".join(
+        f'<div class="wl"><span class="big">{l}</span><b>{t}</b><small>{s}</small></div>' for l, t, s in rows) + "</div>")
+
+
+@fig("hypophos-algo")
+def _():
+    return """<div class="tree">
+<div class="node top">🪫 Phos &lt;2.5 → any <b>shift</b>? (insulin, refeeding, glucose, hyperventilation)</div>
+<div class="row2">
+<div class="node">Yes → <b>redistribution</b><br><small>replace if low/symptomatic; recheck — kidney is fine</small></div>
+<div class="node hl">No → spot urine P + Cr → <b>FEPO₄</b></div></div>
+<div class="row2">
+<div class="node"><b>FEPO₄ &lt;5%</b> (24-h urine &lt;100 mg)<br><small>kidney is saving it → <b>gut / intake</b>: starvation, alcohol, diarrhea, binders, antacids, low vitamin D</small></div>
+<div class="node"><b>FEPO₄ &gt;5%</b> (24-h urine &gt;100 mg)<br><small>kidney is <b>spilling</b> it → check Ca, PTH, 25-OH D, FGF23, urine glucose / amino acids</small></div></div>
+<div class="row3">
+<div class="node"><b>High Ca, high PTH</b><br><small>primary hyperPTH</small></div>
+<div class="node"><b>Low/normal Ca, high PTH</b><br><small>vitamin D deficiency</small></div>
+<div class="node"><b>Normal PTH</b><br><small>FGF23 (IV iron, XLH, tumor) · Fanconi · drugs</small></div></div>
+</div>"""
+
+
+@fig("phos-refill")
+def _():
+    lv = [("m", "2.0–2.4", "Mild", "💊 <b>PO</b> 250–500 mg TID", "IV only if NPO: <b>15 mmol</b> (0.16 mmol/kg)"),
+          ("o", "1.0–1.9", "Moderate", "💊 <b>PO</b> 500 mg TID if eating &amp; no symptoms", "💧 IV <b>30 mmol</b> (0.32 mmol/kg)"),
+          ("s", "&lt;1.0", "Severe", "💧 <b>IV</b> always", "<b>45 mmol</b> (0.64 mmol/kg), max ~50")]
+    cols = "".join(f'<div class="prc {c}"><span class="prv">{v}</span><em class="prn">{n}</em><span>{a}</span><span>{b}</span></div>' for c, v, n, a, b in lv)
+    return f"""<div class="prefill">
+<div class="prhead">⛽ Phosphate refill station (mg/dL)</div>
+<div class="prcols">{cols}</div>
+<div class="prsalt"><div class="psk"><span>🍌 <b>K &lt;4.0</b> &amp; kidneys OK → <b>Potassium phosphate</b></span><small>3 mmol P + 4.4 mEq K per mL · K ≤10 mEq/h</small></div>
+<div class="psn"><span>🧂 <b>K ≥4.0</b> or CKD/AKI → <b>Sodium phosphate</b></span><small>3 mmol P + 4 mEq Na per mL</small></div></div>
+<div class="prrules"><span>🐢 ≤7.5 mmol/h</span><span>🫘 CrCl &lt;30 → ½ dose</span><span>🧪 Recheck P, K, Ca, Mg</span><span>🚫 Not in the Ca line</span></div>
+</div>"""
+
+
+@fig("phos-seesaw")
+def _():
+    return """<svg viewBox="0 0 400 236" class="diag seesaw" role="img" aria-label="Phosphate and calcium seesaw">
+<text x="88" y="26" class="st1 p">Phos ↑</text><text x="88" y="47" class="st2">binds calcium</text>
+<text x="314" y="26" class="st1 c">Ionized Ca ↓</text><text x="314" y="47" class="st2">tetany · long QT</text>
+<text x="200" y="92" class="st1">💎 Ca-P crystals</text><text x="200" y="113" class="st2">vessels · skin · kidney</text>
+<polygon points="200,192 180,228 220,228" class="fulcrum"/>
+<g transform="rotate(-13 200 192)">
+<rect x="28" y="186" width="344" height="12" rx="6" class="plank"/>
+<circle cx="78" cy="154" r="32" class="ball p"/><text x="78" y="161" class="bt">PO₄</text>
+<circle cx="326" cy="164" r="22" class="ball c"/><text x="326" y="170" class="bt sm">Ca</text>
+</g>
+</svg>
+<p class="figcap">Push phosphate up and ionized calcium goes down — the extra Ca-P <b>precipitates</b> in tissues. Giving IV calcium to a patient with very high phos adds more crystals: do it only for symptoms.</p>"""
+
+
+@fig("hyperphos-4b")
+def _():
+    rows = [("B", "Broken kidneys", "<b>AKI / CKD</b> (GFR &lt;30) — most common · hypoparathyroidism · pseudohypoPTH · acromegaly"),
+            ("B", "Broken cells", "<b>tumor lysis</b> · <b>rhabdomyolysis</b> · hemolysis · lactic acidosis / DKA (shift out before insulin)"),
+            ("B", "Bottles & bags", "<b>Fleet enema</b> · oral NaPhos bowel prep · IV phosphate · vitamin D toxicity"),
+            ("B", "Bogus (pseudo)", "hemolyzed sample · <b>paraprotein</b> · high lipids or bilirubin · heparin / tPA / liposomal amphotericin in sample")]
+    return ('<div class="mnem hpm"><div class="mnemt">🪨 High phos — the <b>4 B\'s</b></div>' + "".join(
+        f'<div class="wl"><span class="big">{l}</span><b>{t}</b><small>{s}</small></div>' for l, t, s in rows) + "</div>")
+
+
 def render_fig(name):
     return f'<figure class="hbfig">{FIGS[name]()}</figure>'
 

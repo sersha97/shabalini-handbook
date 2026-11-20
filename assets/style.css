@@ -439,3 +439,47 @@ tr:last-child td{border-bottom:0}
  .bridge .bc{min-height:36px;font-size:12px;border-radius:6px}.bridge .bc small{font-size:8px}
  .bridge .bd{font-size:10px}
 }
+/* ---- phosphate: battery, 4 S / 4 B, FEPO4 tree, refill station, seesaw ---- */
+.pbat{display:grid;gap:8px}
+.pbrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pbcell{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+.pbcell.full{background:color-mix(in srgb,#3f9c5a 10%,var(--card))}.pbcell.low{background:color-mix(in srgb,#d64545 10%,var(--card))}
+.pbcell small{font-size:12px;color:var(--ink2)}
+.pbbar{position:relative;width:86px;height:30px;border:3px solid var(--ink2);border-radius:6px;padding:2px;display:block}
+.pbbar:after{content:"";position:absolute;right:-9px;top:8px;width:5px;height:9px;background:var(--ink2);border-radius:0 2px 2px 0}
+.pbbar i{display:block;height:100%;border-radius:2px}
+.pbcell.full .pbbar i{background:#3f9c5a}.pbcell.low .pbbar i{background:#d64545}
+.pborg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pbo{border:1px solid var(--line);border-radius:12px;padding:8px;background:var(--card);display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px}
+.pbo .pbe{font-size:22px;line-height:1}.pbo b{font-size:13.5px}.pbo small{font-size:12px;color:var(--ink2);line-height:1.3}
+.phm .wl{background:color-mix(in srgb,#8a5cc2 9%,var(--card))}.phm .wl .big{color:#8a5cc2}
+.hpm .wl{background:color-mix(in srgb,#c47a1c 10%,var(--card))}.hpm .wl .big{color:#c47a1c}
+.prefill{display:grid;gap:7px}
+.prhead{font-weight:700;font-size:14px;text-align:center}
+.prcols{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.prc{border-radius:12px;padding:10px;border:1px solid var(--line);border-top:6px solid;display:flex;flex-direction:column;gap:4px;font-size:13px;text-align:center}
+.prc .prv{font:800 22px var(--serif);line-height:1.1}
+.prc .prn{font-style:normal;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2)}
+.prc span:not(.prv){padding-top:4px;border-top:1px dashed var(--line)}
+.prc.m{border-top-color:#e0a82e;background:color-mix(in srgb,#e0a82e 8%,var(--card))}
+.prc.o{border-top-color:#d9682b;background:color-mix(in srgb,#d9682b 9%,var(--card))}
+.prc.s{border-top-color:#b8323a;background:color-mix(in srgb,#b8323a 10%,var(--card))}
+.prsalt{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.prsalt>div{border-radius:12px;padding:9px 10px;border:1px solid var(--line);font-size:13.5px;display:flex;flex-direction:column;gap:2px}
+.prsalt small{font-size:12px;color:var(--ink2)}
+.psk{background:color-mix(in srgb,#f2b134 12%,var(--card))}.psn{background:color-mix(in srgb,#2b7bb9 10%,var(--card))}
+.prrules{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.prrules span{font-size:12.5px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card)}
+.seesaw .fulcrum{fill:color-mix(in srgb,var(--ink) 35%,var(--card))}
+.seesaw .plank{fill:color-mix(in srgb,var(--ink) 55%,var(--card))}
+.seesaw .ball.p{fill:#c47a1c}.seesaw .ball.c{fill:#2b7bb9}
+.seesaw .bt{fill:#fff;font:800 16px var(--sans)}.seesaw .bt.sm{font-size:14px}
+.seesaw .st1{font:800 17px var(--sans)}.seesaw .st2{font:500 14px var(--sans);fill:var(--ink2)}
+.seesaw .st1.p{fill:#c47a1c}.seesaw .st1.c{fill:#2b7bb9}
+@media (prefers-color-scheme:dark){.seesaw .st1.p{fill:#e8a25a}.seesaw .st1.c{fill:#6fb0e8}}
+@media (max-width:560px){
+ .pborg{grid-template-columns:1fr 1fr}
+ .prcols{grid-template-columns:1fr}.prsalt{grid-template-columns:1fr}
+ .row2.stk,.tree .row2{grid-template-columns:1fr}
+}
+.diag.seesaw{display:block;max-width:440px;margin:0 auto}
