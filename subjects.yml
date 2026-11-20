@@ -10,7 +10,9 @@
     - {name: Heart failure, emoji: "💧"}
     - {name: Coronary & ACS, emoji: "🫀"}
     - {name: Syncope & pericardium, emoji: "🩺"}
-  planned: [Hypertensive emergency, Pacemaker & ICD on the wards, Infective endocarditis, Aortic stenosis inpatient]
+    - {name: Valves & endocarditis, emoji: "🚪"}
+    - {name: Aorta & blood pressure, emoji: "🌋"}
+  planned: [Myocarditis, Mitral regurgitation, Hypertrophic cardiomyopathy, Cardiac amyloidosis]
 
 - id: pulmonary
   name: Pulmonary & Critical Care

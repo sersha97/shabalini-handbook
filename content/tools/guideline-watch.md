@@ -8,6 +8,10 @@ summary: What changed recently, and which pages it touched. Reviewed every quart
 
 | Date | Guideline | What changed | Pages |
 |---|---|---|---|
+| Sep 2026 | **CMS TAVR coverage (NCD)** | Symptomatic severe AS covered without CED; asymptomatic AS only in approved studies | Aortic stenosis |
+| Aug 2025 | **ESC/EACTS valvular heart disease** | TAVI for age ≥70 (tricuspid valve, suitable anatomy); earlier AVR in selected asymptomatic severe AS | Aortic stenosis |
+| Aug 2025 | **AHA/ACC high blood pressure** | "Urgency" → **severe hypertension**; no IV drugs for the number in inpatients without organ damage; staged lowering | Hypertensive emergency, Aortic dissection |
+| 2023 | **Duke-ISCVID + ESC endocarditis** | PET/CT and cardiac CT as major criteria; surgery as major criterion; oral step-down (POET) | Endocarditis |
 | Jul 2026 | **ACC ECDP — HFpEF** | SGLT2i + **finerenone** backbone; GLP-1 RA / tirzepatide if BMI ≥30; β-blockers only with an indication | HFpEF |
 | Jun 2026 | **Second Universal Definition of HF** | Less reliance on rigid EF cut-offs; cause and trajectory; new AHA/ACC HF guideline expected 2027 | HFrEF, HFpEF |
 | Mar 2026 | **Surviving Sepsis Campaign 2026** | NEWS/MEWS/SIRS over qSOFA; balanced crystalloids; prolonged-infusion β-lactams; MAP 60–65 if ≥65 y; no routine anaerobic coverage | Sepsis, Hypotension, Fever |
@@ -25,4 +29,4 @@ Every **January, April, July, October**: check ACC/AHA, ESC, IDSA, ATS, ADA, AAS
 
 ## 🛠️ Coming next
 
-Hypertensive emergency · Pacemaker/ICD on the wards · Endocarditis & *S. aureus* bacteremia · C. difficile · Hypercalcemia · Hypokalemia/Mg/Phos · Lower GI bleed · Thyroid storm · TTP/HUS · Tumor lysis · Falls · Night calls: hypoxia, AMS, low urine output.
+*S. aureus* bacteremia · Myocarditis · Mitral regurgitation · HCM · Cardiac amyloid · C. difficile · Hypercalcemia · Hypokalemia/Mg/Phos · Lower GI bleed · Thyroid storm · TTP/HUS · Tumor lysis · Falls · Night calls: hypoxia, AMS, low urine output.

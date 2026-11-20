@@ -139,6 +139,17 @@ def ecg(kind):
     if kind == "sinetach":
         beats = [Beat(t, pr=0.14, qt=0.30) for t in seq(0.15, 0.5, 12)]
         return render_strip(beats, label="Sinus tachycardia 120 — a P before every QRS")
+    if kind == "paced":
+        ts = seq(0.2, 0.86, 7)
+        spike = lambda x: sum(g(x, t + 0.16, 0.0025, 1.6) for t in ts)
+        beats = [Beat(t, pr=0.17, qrs="wide", r_amp=1.0, t_amp=-0.35, qt=0.42, t_sd=0.07) for t in ts]
+        return render_strip(beats, baseline=spike, label="DDD pacing — atrial-sensed, ventricular-paced: spike → wide QRS")
+    if kind == "ftc":
+        ts = seq(0.2, 0.86, 7)
+        spike = lambda x: sum(g(x, t + 0.16, 0.0025, 1.6) for t in ts)
+        beats = [Beat(t, pr=0.17, qrs="wide", r_amp=1.0, t_amp=-0.35, qt=0.42, t_sd=0.07, conducted=(i not in (2, 3, 5)))
+                 for i, t in enumerate(ts)]
+        return render_strip(beats, baseline=spike, label="Failure to capture — pacing spikes with no QRS after them")
     raise KeyError(kind)
 
 
@@ -389,6 +400,244 @@ def _():
 <div class="specitem st"><b>CES-C</b><span>Complete: no saddle sensation, no bladder or anal control</span><span>➡️ often permanent</span></div>
 </div>
 <p class="figcap">S = suspected · I = incomplete · R = retention · C = complete. The goal is to <b>operate before CES-R</b>. Once the bladder is gone, surgery often cannot bring it back.</p>"""
+
+
+
+# ---------- Conduction system heart (ported from jPoint EP Lab, core/heart.js) ----------
+# Anatomic frontal view, as you face the patient: patient's RIGHT is on the viewer's LEFT.
+JP = {
+    "SVC": "M98 6 L98 72 L134 72 L134 6",
+    "IVC": "M70 196 C60 214 56 230 52 250 L80 250 C82 234 86 220 96 204 Z",
+    "RA": "M98 70 C64 80 54 120 58 160 C60 182 70 198 86 204 L190 207 L193 98 C176 76 150 68 134 70 Z",
+    "LA": "M200 98 C226 72 300 70 330 92 C350 120 348 170 334 200 L206 207 Z",
+    "RV": "M84 214 L196 214 C200 262 226 312 268 350 C222 360 160 342 116 300 C92 276 82 246 84 214 Z",
+    "IVS": "M196 214 L214 214 C222 262 248 306 290 348 L278 356 C236 316 206 268 196 214 Z",
+    "LV": "M214 214 L338 212 C356 252 348 316 300 358 L290 350 C250 310 224 266 214 214 Z",
+    "PV": "M236 78 L226 50 M262 72 L258 44 M318 84 L340 62 M338 112 L366 104",
+    "TV": "M86 210 L192 210", "MV": "M216 210 L336 208",
+    "CFB": "M193 204 h18 v10 h-18 Z",
+    "crista": "M108 82 C80 108 72 156 92 198",
+    "bachmann": "M126 76 C170 58 236 64 300 84",
+    "internodal": "M124 80 C160 110 178 150 184 178",
+    "AVN_fast": "M193 128 C190 150 188 166 186 178", "AVN_slow": "M162 192 C170 188 178 184 184 182",
+    "AVN": "M178 176 C182 174 190 176 192 182 C190 188 182 190 178 186 Z",
+    "HIS": "M188 184 L202 214 L206 224",
+    "LBB": "M206 224 L224 234",
+    "LAF": "M224 234 C248 232 278 226 306 230",
+    "LPF": "M224 234 C238 262 254 292 276 316",
+    "RBB": "M204 224 C206 254 220 290 238 316",
+    "MB": "M238 316 C206 324 170 316 136 296",
+    "purk": "M306 230 l14 -6 M306 230 l10 10 M276 316 l14 4 M276 316 l2 14 M136 296 l-10 -10 M136 296 l-6 12 M238 316 l8 14 M262 340 l-10 8",
+}
+# label: x, y, text, anchor, strong
+JP_LABELS = [
+    (106, 24, "SVC", "start", 0), (22, 246, "IVC", "start", 0), (112, 124, "RA", "start", 0), (262, 124, "LA", "start", 0),
+    (132, 262, "RV", "start", 0), (300, 284, "LV", "start", 0), (344, 56, "PVs", "start", 0),
+    (104, 78, "SA node", "end", 1), (150, 58, "Bachmann", "start", 1), (172, 168, "AV node", "end", 1),
+    (212, 198, "His", "start", 1), (250, 254, "LBB", "start", 1), (310, 226, "LAF", "start", 1), (282, 328, "LPF", "start", 1),
+    (176, 338, "RBB / moderator band", "middle", 1),
+]
+# where to draw the red X for each block level
+JP_BLOCK = {"avn": ("AVN", (185, 182), ["HIS", "LBB", "LAF", "LPF", "RBB", "MB"]),
+            "his": ("HIS", (199, 210), ["LBB", "LAF", "LPF", "RBB", "MB"]),
+            "rbb": ("RBB", (214, 272), ["MB"]),
+            "lbb": ("LBB", (215, 229), ["LAF", "LPF"]),
+            "laf": ("LAF", (266, 230), []),
+            "lpf": ("LPF", (246, 284), [])}
+
+
+def heart_svg(labels=True, block=None, title=None, small=False):
+    P = JP
+    blocked, mark, down = (None, None, [])
+    if block:
+        blocked, mark, down = JP_BLOCK[block]
+
+    def cls(key, base):
+        c = base
+        if key == blocked:
+            c += " blk"
+        elif key in down:
+            c += " dim"
+        return c
+    lab = ""
+    if labels:
+        lab = "".join(f'<text x="{x}" y="{y}" text-anchor="{a}" class="hl{" sp" if s else ""}">{t}</text>'
+                      for x, y, t, a, s in JP_LABELS)
+    xm = ""
+    if mark:
+        x, y = mark
+        xm = (f'<g class="xm" transform="translate({x} {y})"><circle r="11"/>'
+              f'<path d="M-5 -5 L5 5 M5 -5 L-5 5"/></g>')
+    ttl = f'<text x="200" y="368" text-anchor="middle" class="jtitle">{title}</text>' if title else ""
+    vb = "0 0 400 376" if title else "0 0 400 364"
+    return f'''<svg viewBox="{vb}" class="jph{" sm" if small else ""}" role="img" aria-label="Frontal view of the heart and conduction system{(" — " + title) if title else ""}">
+<g class="vessels"><path d="{P['SVC']}" class="vessel"/><path d="{P['IVC']}" class="vessel"/><path d="{P['PV']}" class="pv"/></g>
+<path d="{P['RA']}" class="ch rt"/><path d="{P['LA']}" class="ch lt"/>
+<path d="{P['RV']}" class="ch rt"/><path d="{P['LV']}" class="ch lt"/><path d="{P['IVS']}" class="ch sep"/>
+<line x1="194" y1="98" x2="194" y2="206" class="ias"/>
+<path d="{P['TV']}" class="annulus"/><path d="{P['MV']}" class="annulus"/><path d="{P['CFB']}" class="cfb"/>
+<path d="{P['crista']}" class="faint"/><path d="{P['internodal']}" class="faint"/><path d="{P['bachmann']}" class="bach"/>
+<path d="{P['AVN_fast']}" class="avp"/><path d="{P['AVN_slow']}" class="avp"/>
+<path d="{P['AVN']}" class="{cls('AVN', 'avn')}"/>
+<path d="{P['HIS']}" class="{cls('HIS', 'his')}"/><path d="{P['LBB']}" class="{cls('LBB', 'bb')}"/>
+<path d="{P['LAF']}" class="{cls('LAF', 'bb')}"/><path d="{P['LPF']}" class="{cls('LPF', 'bb')}"/>
+<path d="{P['RBB']}" class="{cls('RBB', 'bb')}"/><path d="{P['MB']}" class="{cls('MB', 'bb')}"/>
+<path d="{P['purk']}" class="purk"/>
+<ellipse cx="118" cy="74" rx="9" ry="6" class="san"/>
+{xm}{lab}{ttl}
+</svg>'''
+
+
+@fig("conduction-heart")
+def _():
+    return f'''<div class="jpwrap">{heart_svg()}</div>
+<div class="jplegend"><span><i class="k san"></i>SA node — pacemaker, 60–100/min</span><span><i class="k avn"></i>AV node — the delay (PR)</span><span><i class="k hp"></i>His–Purkinje — the fast highway (QRS)</span></div>
+<p class="figcap">Frontal view, as you face the patient (patient's right is on your left). Order of the impulse: <b>SA node → atria</b> (Bachmann's bundle to the LA) <b>→ AV node</b> (slow, makes the PR) <b>→ His bundle</b> (crosses the fibrous skeleton) <b>→ right bundle</b> (thin cord down the septum, then the moderator band) and <b>left bundle</b> (short trunk that fans into the <b>anterior</b> and <b>posterior fascicles</b>) <b>→ Purkinje fibers</b>. Diagram adapted from the jPoint EP Lab model.</p>'''
+
+
+@fig("block-levels")
+def _():
+    items = [("avn", "AV node", "1° / Mobitz I · narrow escape 40–60 · usually benign"),
+             ("his", "His / infra-His", "Mobitz II / CHB · wide escape 20–40 · pace"),
+             ("rbb", "Right bundle", "RBBB · rSR′ in V1"),
+             ("lbb", "Left bundle", "LBBB · broad R in V6, QS in V1"),
+             ("laf", "Left anterior fascicle", "LAFB · axis −45° or more left"),
+             ("lpf", "Left posterior fascicle", "LPFB · right axis (rare)")]
+    cards = "".join(f'<div class="blk-card">{heart_svg(labels=False, block=k, small=True)}<b>{n}</b><small>{s}</small></div>'
+                    for k, n, s in items)
+    return f'''<div class="blkgrid">{cards}</div>
+<p class="figcap"><b>Where is the block?</b> Red ✕ = the block. Grey = the parts that now fill late, by slow muscle-to-muscle spread. Above the His (node) → narrow QRS, often vagal or drugs. Below the His → wide QRS, unstable escape, needs a pacemaker.</p>'''
+
+
+def _qrs_svg(path, lead, color="#d64545"):
+    return (f'<svg viewBox="0 0 120 110" class="qrs" role="img" aria-label="{lead}">'
+            f'<line x1="0" y1="62" x2="120" y2="62" class="base"/><path d="{path}" style="stroke:{color}"/>'
+            f'<text x="6" y="16" class="ld">{lead}</text></svg>')
+
+
+@fig("bbb-qrs")
+def _():
+    # schematic QRS shapes (baseline y=62)
+    rbbb_v1 = "M8 62 L28 62 L33 50 L39 72 L50 16 L60 62 L70 62 C80 72 92 74 104 62 L112 62"
+    rbbb_v6 = "M8 62 L30 62 L33 66 L40 16 L48 62 L54 74 C62 80 68 70 74 62 L80 62 C90 50 100 50 108 62 L112 62"
+    lbbb_v1 = "M8 62 L30 62 L34 58 L44 100 L58 100 L66 62 L82 52 C92 46 100 56 112 62"
+    lbbb_v6 = "M8 62 L30 62 L36 26 L44 16 L50 24 L56 14 L66 62 L80 76 C92 82 100 70 112 62"
+    rb = _qrs_svg(rbbb_v1, "V1") + _qrs_svg(rbbb_v6, "V6")
+    lb = _qrs_svg(lbbb_v1, "V1", "#2b7bb9") + _qrs_svg(lbbb_v6, "V6", "#2b7bb9")
+    return f'''<div class="bbbpair">
+<div class="bbbcol r"><b>RBBB — "bunny ears" in V1</b><div class="qrow">{rb}</div><small>rSR′ in V1–V2 · wide slurred S in I and V6 · QRS ≥120 ms</small></div>
+<div class="bbbcol l"><b>LBBB — "the tall notched R"</b><div class="qrow">{lb}</div><small>QS or rS in V1 · broad notched R in I, aVL, V6 · no septal q · ST–T opposite the QRS</small></div>
+</div>
+<p class="figcap">Memory hook: <b>WiLLiaM MaRRoW</b> — LBBB looks like a <b>W</b> in V1 and an <b>M</b> in V6; RBBB looks like an <b>M</b> in V1 and a <b>W</b> in V6. Schematic shapes, not real tracings.</p>'''
+
+
+@fig("autoreg")
+def _():
+    return '''<svg viewBox="0 0 420 250" class="diag autoreg" role="img" aria-label="Cerebral autoregulation curve shifts right in chronic hypertension">
+<line x1="50" y1="210" x2="400" y2="210" class="ax"/><line x1="50" y1="210" x2="50" y2="20" class="ax"/>
+<text x="225" y="240" class="t2">Mean arterial pressure →</text>
+<text x="18" y="115" class="t2" transform="rotate(-90 18 115)">Brain blood flow →</text>
+<path d="M60 190 C80 120 90 110 110 110 L210 110 C240 110 250 60 280 30" class="cv n"/>
+<path d="M120 195 C150 122 160 116 180 116 L300 116 C330 116 340 60 370 30" class="cv h"/>
+<text x="150" y="96" class="t3n">Normal</text><text x="250" y="138" class="t3h">Chronic HTN</text>
+<circle cx="141" cy="150" r="6" class="dot"/>
+<text x="152" y="172" class="t2 sm" text-anchor="start">"Normal" BP on a shifted curve</text><text x="152" y="188" class="t2 sm red" text-anchor="start">= low flow, ischemia</text>
+</svg>
+<p class="figcap">The brain (and kidney, heart) keep flow stable across a range of pressures. After years of high BP, that range <b>moves to the right</b>. A "normal" BP can now be <b>too low for this patient</b> → stroke, MI, AKI. That is why we lower BP <b>in steps</b>, not to normal in one hour.</p>'''
+
+
+@fig("htn-steps")
+def _():
+    return '''<div class="steps4">
+<div class="st s1"><b>⏱️ First hour</b><span>SBP ↓ by <b>no more than 25%</b></span></div>
+<div class="st s2"><b>🕑 Next 2–6 h</b><span>If stable → <b>&lt;160/100</b></span></div>
+<div class="st s3"><b>📅 24–48 h</b><span>Cautiously → <b>130–140</b> systolic, start oral meds</span></div>
+</div>
+<div class="steps4 exc">
+<div class="st x1"><b>🧵 Aortic dissection</b><span>SBP <b>&lt;120</b> and HR <b>&lt;60</b> within the first hour (as fast as tolerated)</span></div>
+<div class="st x2"><b>🤰 Preeclampsia · 🧪 pheo</b><span>SBP <b>&lt;140</b> in the first hour</span></div>
+<div class="st x3"><b>🧠 Stroke / ICH</b><span>Own targets — see Management</span></div>
+</div>
+<p class="figcap">Top: no compelling condition (2025 AHA/ACC). Bottom: <b>compelling conditions</b> — here faster and lower is the goal.</p>'''
+
+
+@fig("aorta-types")
+def _():
+    def aorta(kind):
+        flap = ('<path d="M92 210 C86 150 92 100 130 74" class="flap"/><path d="M146 66 C190 50 230 60 252 96 L262 150" class="flap"/>'
+                if kind == "A" else '<path d="M256 112 L262 160 L264 230" class="flap"/>')
+        tag = "Stanford A" if kind == "A" else "Stanford B"
+        sub = "involves the ascending aorta" if kind == "A" else "starts after the left subclavian"
+        act = "→ emergency surgery" if kind == "A" else "→ medical ± TEVAR"
+        return f'''<svg viewBox="0 0 320 352" class="diag aorta" role="img" aria-label="{tag} aortic dissection">
+<path d="M80 250 L80 140 C80 70 120 40 170 40 C230 40 272 70 272 130 L272 280 L240 280 L240 132 C240 92 210 72 170 72 C132 72 112 96 112 140 L112 250 Z" class="wall"/>
+<path d="M140 46 L134 10 M170 40 L170 6 M196 44 L204 10" class="branch"/>
+<text x="210" y="16" class="sm">L subclavian</text>
+<ellipse cx="96" cy="262" rx="26" ry="9" class="valve"/>
+{flap}
+<text x="160" y="304" class="t1 {"red" if kind=="A" else "blue"}">{tag}</text>
+<text x="160" y="324" class="t2">{sub}</text>
+<text x="160" y="344" class="t2 b">{act}</text>
+</svg>'''
+    return f'''<div class="aopair">{aorta("A")}{aorta("B")}</div>
+<p class="figcap">Red line = the intimal flap. <b>Type A</b> (any ascending involvement, wherever the tear starts) can rupture into the pericardium (tamponade), tear the aortic valve (acute AR) or dissect a coronary — usually the <b>RCA</b> → inferior STEMI. <b>Type B</b> threatens what branches off downstream: gut, kidneys, spinal cord, legs.</p>'''
+
+
+@fig("duke-iscvid")
+def _():
+    return '''<div class="duke">
+<div class="dcol maj"><h4>MAJOR</h4>
+<div class="di"><b>🧫 Microbiology</b><small>Typical organism in ≥2 separate cultures (S. aureus, S. lugdunensis, E. faecalis, viridans/most strep, HACEK, Granulicatella, Abiotrophia, Gemella) · non-typical in ≥3 sets · Coxiella (culture or phase I IgG &gt;1:800) · positive PCR/sequencing</small></div>
+<div class="di"><b>🖥️ Imaging</b><small>Echo or cardiac CT: vegetation, perforation, abscess, pseudoaneurysm, fistula, new prosthetic dehiscence · <b>PET/CT</b>: abnormal uptake at valve, graft or leads (NEW)</small></div>
+<div class="di"><b>🔪 Surgery</b><small>IE seen by the surgeon at operation (NEW)</small></div>
+</div>
+<div class="dcol min"><h4>MINOR</h4>
+<div class="di">🫀 Predisposition (prior IE, prosthetic valve, IDU, CIED, congenital/valve disease)</div>
+<div class="di">🌡️ Fever &gt;38.0 °C</div>
+<div class="di">🩸 Vascular: emboli, septic pulmonary infarcts, mycotic aneurysm, ICH, conjunctival hemorrhage, <b>Janeway</b> lesions, imaging-only emboli</div>
+<div class="di">🧬 Immunologic: GN, <b>Osler</b> nodes, <b>Roth</b> spots, RF+</div>
+<div class="di">🧪 Micro that falls short of major</div>
+<div class="di">🖥️ PET uptake &lt;3 months after prosthesis · 🩺 new regurgitant murmur if no echo</div>
+</div>
+</div>
+<div class="dres"><span class="def">✅ <b>Definite</b> = 2 major · 1 major + 3 minor · 5 minor · or pathology</span><span class="pos">❓ <b>Possible</b> = 1 major + 1 minor · or 3 minor</span></div>
+<p class="figcap">2023 Duke-ISCVID criteria, simplified. These are classification criteria — a strong clinical picture still gets treated.</p>'''
+
+
+@fig("as-door")
+def _():
+    return '''<svg viewBox="0 0 440 210" class="diag asg" role="img" aria-label="Pressure gradient across a stenotic aortic valve">
+<line x1="40" y1="180" x2="420" y2="180" class="ax"/><line x1="40" y1="180" x2="40" y2="14" class="ax"/>
+<text x="230" y="202" class="t2">Systole →</text><text x="16" y="100" class="t2" transform="rotate(-90 16 100)">Pressure</text>
+<path d="M60 170 C90 168 96 40 160 30 C230 22 270 34 300 90 C320 140 330 168 360 172" class="lvp"/>
+<path d="M60 120 C100 120 110 112 140 100 C180 86 230 84 280 100 C310 112 330 118 360 122" class="aop"/>
+<path d="M140 100 C96 40 160 30 160 30 C230 22 270 34 280 100 C230 84 180 86 140 100 Z" class="grad"/>
+<text x="210" y="62" class="t3">gradient</text>
+<text x="372" y="168" class="sm l">LV</text><text x="372" y="124" class="sm a">Aorta</text>
+</svg>
+<div class="hexgrid as4">
+<div class="hx">⛽<b>Keep the tank full</b><small>Preload-dependent. Diurese gently. Treat bleeding and vomiting fast.</small></div>
+<div class="hx">🐢<b>Keep the rate slow</b><small>Tachycardia shortens diastole → less filling and coronary flow. AF poorly tolerated.</small></div>
+<div class="hx">🎯<b>Keep the afterload up</b><small>Big vasodilator drops (nitro, hydralazine, sedation) → BP crash. Hypotension → phenylephrine or norepinephrine.</small></div>
+<div class="hx">🎻<b>Keep the rhythm</b><small>The stiff LV needs the atrial kick. Cardiovert unstable AF early.</small></div>
+</div>
+<p class="figcap">A calcified valve is a <b>fixed, narrow door</b>. The LV must push much harder (the shaded gap is the gradient). Cardiac output cannot rise much — so anything that drops filling or BP can cause collapse.</p>'''
+
+
+@fig("nbg-code")
+def _():
+    return '''<div class="nbg">
+<div class="nl"><span class="big">D</span><b>Chamber paced</b><small>A · V · D (both) · O</small></div>
+<div class="nl"><span class="big">D</span><b>Chamber sensed</b><small>A · V · D · O (none)</small></div>
+<div class="nl"><span class="big">D</span><b>Response to sensing</b><small>I = inhibit · T = trigger · D = both · O = none</small></div>
+<div class="nl opt"><span class="big">R</span><b>Rate response</b><small>Sensor speeds up with activity</small></div>
+</div>
+<div class="magnet">
+<div class="mg pm"><b>🧲 Magnet on a pacemaker</b><span>→ <b>asynchronous pacing</b> (VOO/DOO) at the magnet rate. Pacing does <b>not</b> stop. Use: stop EMI inhibition in surgery, end pacemaker-mediated tachycardia.</span></div>
+<div class="mg icd"><b>🧲 Magnet on an ICD</b><span>→ <b>shocks and ATP suspended</b>. Pacing is <b>unchanged</b> (still inhibited by noise). Remove magnet → therapies come back.</span></div>
+<div class="mg ll"><b>💊 Leadless pacemaker</b><span>Most have <b>no magnet response</b> — call the device team to reprogram.</span></div>
+</div>
+<p class="figcap">DDD = paces and senses both chambers, inhibits or triggers. VVI = paces and senses the ventricle, inhibits if it sees a native beat. Magnet response differs by vendor and programming — confirm with the device clinic.</p>'''
 
 
 def render_fig(name):

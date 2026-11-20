@@ -5,7 +5,7 @@ group: Arrhythmias
 order: 5
 summary: Who needs atropine, who needs pacing, and the reversible causes you must find first.
 tags: [AV block, Mobitz, atropine, pacing]
-reviewed: 2026-11-18
+reviewed: 2026-11-19
 sources: 2018 ACC/AHA/HRS bradycardia guideline · 2025 AHA ACLS
 ---
 
@@ -18,6 +18,8 @@ sources: 2018 ACC/AHA/HRS bradycardia guideline · 2025 AHA ACLS
 :::
 
 ## 🧠 Pathophysiology in 60 seconds
+
+{{fig:block-levels}}
 
 - **Sinus node** problems → sinus brady, pauses, tachy-brady (sick sinus).
 - **AV node** problems (above the His) → 1st degree, **Mobitz I**. Usually benign, often vagal or drugs. Narrow QRS escape ~40–60.
